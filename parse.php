@@ -41,7 +41,6 @@
 	  
 	}
 	imagejpeg($bmp,"out.jpg");
-  $myFILE = fopen("tmp/captcha0.txt", "w");
 	$splitcount = 0;
 	$ROWS = count($countmap);
 	for ($id = 0; $id < $ROWS; $id++) {
@@ -65,17 +64,16 @@
 			if ($spaceflag != 0) {  //end of split series
 				$spaceflag = 0;
 				if (($rows_since_split >= $MINROWS)) {
-					fclose($myFILE);
 					$rows_since_split = 0;
+					$split[$splitcount] = $id;
 					$splitcount++;
-					$myFILE = fopen("tmp/captcha$splitcount.txt", "w");
 					echo "split at $id long \n";
 					
 				}
 			}
-
 			//spaceflag == 0, test for too long since split
 			else if($rows_since_split > $MAXROWS) { //too long no split
+				echo "hit ceil at $id \n" ;
 				$min = 100;
 				$splitRowID = 0;
 				for ($i = $rows_since_split - $MINROWS; $i > 0; $i--){
@@ -85,20 +83,30 @@
 						$splitRowID = $id - $i;
 					}
 				}
-					fclose($myFILE);
 					$rows_since_split = 0;
+					$split[$splitcount] = $splitRowID;
 					$splitcount++;
-					$myFILE = fopen("tmp/captcha$splitcount.txt", "w");
-					echo "split at $id \n";
 					$id = $splitRowID;
+					echo "split at $id \n";
 			}
-			else {
-				fwrite($myFILE, $linemap[$id]."\n" );
-			}
-		
 		}
-
-
-
 	}
+	$lastsplit = 0;
+	for ($id = $ROWS - 1; $count == 0; $id--){
+		$count = $countmap[$id];
+		$lastsplit = $id;	
+	}
+	$split[$splitcount] = $lastsplit;
+	$myFILE = fopen("tmp/captcha0.txt", "w");
+	$splitID = 0;
+	foreach ($linemap as $id => $line) {
+		fwrite($myFILE, "$id ".$line."\n" );
+		if ( ($id < $lastsplit) && ($id == $split[$splitID])){
+			$splitID++;
+			fclose($myFILE);
+			$myFILE = fopen("tmp/captcha$splitID.txt", "w");
+		}
+	}
+	fclose($myFILE);
+
 ?>
