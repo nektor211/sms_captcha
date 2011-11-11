@@ -1,5 +1,7 @@
 <?php
-	$img=imagecreatefromjpeg("captcha.jpg");
+	$ImgID = rand(1, 84);
+	$img=imagecreatefromjpeg("samples/$ImgID.jpg");
+	echo "$imgID";
 	$sx=imagesx($img);
 	$sy=imagesy($img);
 	$bmp=imagecreate($sx,$sy);
