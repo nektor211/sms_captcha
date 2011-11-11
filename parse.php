@@ -1,7 +1,7 @@
 <?php
 	$ImgID = rand(1, 84);
 	$img=imagecreatefromjpeg("samples/$ImgID.jpg");
-	echo "$imgID";
+	echo "$ImgID";
 	$sx=imagesx($img);
 	$sy=imagesy($img);
 	$bmp=imagecreate($sx,$sy);
