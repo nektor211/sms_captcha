@@ -28,11 +28,16 @@
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
 				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
-					$line.= "1";
+					$line.= "r";
 					$count++;
 				}
+				else if ($r<30 && $g<30 && $b<30) {
+					$line.= "b";
+				}
+
+
 				else {
-					$line.= "0";
+					$line.= "w";
 				}
 		}
 		
