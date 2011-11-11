@@ -7,8 +7,8 @@
 	$white=imagecolorallocate($bmp,255,255,255);
 	$spaceflag = 0;
 	$spacecount = 0;
-	$MINROWS = 15;
-	$MAXROWS = 35;
+	$MINROWS = 13;
+	$MAXROWS = 30;
 	$rows_since_split = 0;
 
 	
@@ -25,7 +25,7 @@
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
-				if($r>150 && $g<100 && $b>100 && $b<200){
+				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
 					$line.= "1";
 					$count++;
 				}
@@ -41,7 +41,6 @@
 	  
 	}
 	imagejpeg($bmp,"out.jpg");
-  $myFILE = fopen("tmp/captcha0.txt", "w");
 	$splitcount = 0;
 	$ROWS = count($countmap);
 	for ($id = 0; $id < $ROWS; $id++) {
@@ -65,40 +64,50 @@
 			if ($spaceflag != 0) {  //end of split series
 				$spaceflag = 0;
 				if (($rows_since_split >= $MINROWS)) {
-					fclose($myFILE);
 					$rows_since_split = 0;
+					$split[$splitcount] = $id;
 					$splitcount++;
-					$myFILE = fopen("tmp/captcha$splitcount.txt", "w");
 					echo "split at $id long \n";
 					
 				}
 			}
-
 			//spaceflag == 0, test for too long since split
 			else if($rows_since_split > $MAXROWS) { //too long no split
+				echo "hit ceil at $id \n" ;
 				$min = 100;
 				$splitRowID = 0;
-				for ($i = $rows_since_split - $MINROWS; $i > 0; $i--){
-					$tCount = $countmap[$id - $i];
+				for ($i = 0; $i < $rows_since_split - $MINROWS; $i++){
+					$tCount = $countmap[($id - $i)];
 					if ($tCount <= $min) {
 						$min = $tCount;
 						$splitRowID = $id - $i;
+						echo "min at $splitRowID : $min \n";
 					}
 				}
-					fclose($myFILE);
-					$rows_since_split = 0;
-					$splitcount++;
-					$myFILE = fopen("tmp/captcha$splitcount.txt", "w");
-					echo "split at $id \n";
-					$id = $splitRowID;
+				$rows_since_split = 0;
+				$split[$splitcount] = $splitRowID;
+				$splitcount++;
+				$id = $splitRowID;
+				echo "split at $id \n";
 			}
-			else {
-				fwrite($myFILE, $linemap[$id]."\n" );
-			}
-		
 		}
-
-
-
 	}
+	$lastsplit = 0;
+	for ($id = $ROWS - 1; $count == 0; $id--){
+		$count = $countmap[$id];
+		$lastsplit = $id;	
+	}
+	$split[$splitcount] = $lastsplit;
+	$myFILE = fopen("tmp/captcha0.txt", "w");
+	$splitID = 0;
+	foreach ($linemap as $id => $line) {
+		fwrite($myFILE, "$id ".$line."\n" );
+		if ( ($id < $lastsplit) && ($id == $split[$splitID])){
+			$splitID++;
+			fclose($myFILE);
+			$myFILE = fopen("tmp/captcha$splitID.txt", "w");
+		}
+	}
+	fclose($myFILE);
+
 ?>
