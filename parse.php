@@ -7,8 +7,8 @@
 	$white=imagecolorallocate($bmp,255,255,255);
 	$spaceflag = 0;
 	$spacecount = 0;
-	$MINROWS = 15;
-	$MAXROWS = 35;
+	$MINROWS = 13;
+	$MAXROWS = 30;
 	$rows_since_split = 0;
 
 	
@@ -25,7 +25,7 @@
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
-				if($r>150 && $g<100 && $b>100 && $b<200){
+				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
 					$line.= "1";
 					$count++;
 				}
@@ -76,18 +76,19 @@
 				echo "hit ceil at $id \n" ;
 				$min = 100;
 				$splitRowID = 0;
-				for ($i = $rows_since_split - $MINROWS; $i > 0; $i--){
-					$tCount = $countmap[$id - $i];
+				for ($i = 0; $i < $rows_since_split - $MINROWS; $i++){
+					$tCount = $countmap[($id - $i)];
 					if ($tCount <= $min) {
 						$min = $tCount;
 						$splitRowID = $id - $i;
+						echo "min at $splitRowID : $min \n";
 					}
 				}
-					$rows_since_split = 0;
-					$split[$splitcount] = $splitRowID;
-					$splitcount++;
-					$id = $splitRowID;
-					echo "split at $id \n";
+				$rows_since_split = 0;
+				$split[$splitcount] = $splitRowID;
+				$splitcount++;
+				$id = $splitRowID;
+				echo "split at $id \n";
 			}
 		}
 	}
