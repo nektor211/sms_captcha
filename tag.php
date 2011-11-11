@@ -17,13 +17,21 @@ while (false !== ($entry = $d->read())) {
     #echo $entry."\n";
     $txt=substr_replace($entry, "txt", -3);
     $pod=substr_replace($entry, "____", -4);
-    //echo $txt."\n";
+		//echo $txt."\n";
     if(file_exists("samples/$txt")){
-	  $lines=file("samples/$txt");
-	  $data=chop($lines[0]);
-	}else{
-	  $data="";
-	}
+	  	
+			$lines=file("samples/$txt");
+	  	
+			if (isset ($lines[0])) {
+				$data=chop($lines[0]);
+			}
+			else {
+				$data = "";
+			}
+		}
+		else{
+	  	$data="";
+		}
 	//echo $data."\n";
 	echo "<image src=\"samples/$entry\" /><br>\n";
 	echo "<input type=\"text\" name=\"$pod\" value=\"$data\"><br>";
