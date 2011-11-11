@@ -4,6 +4,10 @@ foreach ($_POST as $key=>$value) {
   if(strstr($key, "____")){
     $txt=substr_replace($key, ".txt", -4);
     $file=fopen("samples/".$txt,"w");
+    if(strlen($value)==7){
+	    $v=preg_split('//',$value);
+	    $value=trim(implode(' ',$v));
+    }
     fwrite($file, $value);
     fclose($file);
   }
