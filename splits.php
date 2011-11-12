@@ -1,5 +1,5 @@
 <?php
-foreach ($_POST as $key=>$value) {
+/*foreach ($_POST as $key=>$value) {
   if(strstr($key, "____")){
     $txt=substr_replace($key, ".txt", -4);
     $file=fopen("samples/".$txt,"w");
@@ -10,35 +10,41 @@ foreach ($_POST as $key=>$value) {
     fwrite($file, $value);
     fclose($file);
   }
-}
+}*/
 
 echo '<form action="tag.php" method="post">';
-$d = dir("samples");
+$d = dir("splits");
+
+$all;
 
 while (false !== ($entry = $d->read())) {
-  if(strstr($entry, ".jpg")){
+  if(strstr($entry, ".png")){
     #echo $entry."\n";
-    $txt=substr_replace($entry, "txt", -3);
+    $txt=substr(substr_replace($entry, "txt", -5),1);
     $pod=substr_replace($entry, "____", -4);
-		//echo $txt."\n";
-    if(file_exists("samples/$txt")){
+    $entrya=explode('.',$entry);
+    $i=$entrya[1];
+    if((!isset($all[$txt])) && file_exists("samples/$txt")){
 	  	
 			$lines=file("samples/$txt");
+			echo '<br>';
 	  	
 			if (isset ($lines[0])) {
-				$data=chop($lines[0]);
+				$all[$txt]=explode(' ',chop($lines[0]));
+				
 			}
 			else {
-				$data = "";
+				$all[$txt][].= "";
 			}
 		}
 		else{
-	  	$data="";
+	  	$all[$txt][].="";
 		}
 	//echo $data."\n";
-	echo "<image src=\"samples/$entry\" /><br>\n";
-	echo "<input type=\"text\" name=\"$pod\" value=\"$data\"><br>";
+	echo "<image src=\"splits/$entry\" />".$all[$txt][$i]."|\n";
+	#echo "<input type=\"text\" name=\"$pod\" value=\"".$all[$txt][$i]."\"><br>";
   }
-}echo "<input type=\"submit\"></form>";
+}
+//echo "<input type=\"submit\"></form>";
 $d->close();
 ?>
