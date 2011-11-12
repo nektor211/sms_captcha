@@ -1,9 +1,9 @@
 Jakub: evaluaci po kouskach
-paja: zaloz file TODO ;)
+#paja: zaloz file TODO ;)
 Jakub: (dorazit splitting tak, aby vrace stejne velka policka)
 *vracel
 a pak tagovat
-paja: >TODO
+#paja: >TODO
 Jakub: pripadne pustit eval
 tim myslim nejake trenovani
 kdyz bude dost dat.
