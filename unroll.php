@@ -3,12 +3,12 @@
 	
 	$myFILEout = fopen("splits/data.txt", "a");
 	
-	$d = dir("splits");
+	$d = dir("splits/c");
 	
 	while(false != ($entry = $d->read()) ) {
 		
 	 if ((strstr($entry, "c")) && (strstr($entry, ".txt"))) {
-			$myFILEin = fopen("splits/$entry", "r");
+			$myFILEin = fopen("splits/c/$entry", "r");
 			while (!feof($myFILEin)) {
 				$c = fgetc($myFILEin);
 				if($c == 'r') {
