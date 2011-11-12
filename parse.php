@@ -124,15 +124,64 @@
 			}
 		}
 	}
+
 	$lastsplit = 0;
 	for ($id = $ROWS - 1; $count == 0; $id--){
 		$count = $countmap[$id];
 		$lastsplit = $id;	
+		if ($lastsplit == $split[$splitcount-1]) $splitcount--;
 	}
-	
+
+
+	while ($splitcount < 7) {
+		$maxlength = 0;
+		$maxsplitID = 0;
+		foreach($split as $SID => $SRID) {
+			if(($SID == 0) || ($SID == 7)) {
+				continue;
+			}
+			else {
+				$Slength = $SRID - $split[$SID-1];
+			}
+			if ($Slength > $maxlength) {
+				$maxlength = $Slength;
+				$maxsplitID = $SID;
+			}
+		
+		}
+		echo "found longest section at $maxsplitID, ";
+		$MINROWSred = 6;
+		$mincount = 100;
+		$minrow = 0;
+		$istart = $split[$maxsplitID - 1] + $MINROWSred;
+		$istop = $split[$maxsplitID] - $MINROWSred;
+		for($i = $istart; $i < $istop; $i++ ) {
+			if ($countmap[$i] < $mincount) {
+				$mincount = $countmap[$i];
+				$minrow = $i;		
+			}	
+		}
+		echo "found minimal row at $minrow \n";
+		$i = 0;
+		for ($s = $splitcount; $s > 0; $s--) {
+			if ($s > $maxsplitID) {
+				$split[$s+1] = $split[$s];
+			}
+
+			else {
+				$split[$s+1] = $split[$s];
+				$split[$s] = $minrow;
+				$splitcount++;
+				echo "split up \n";
+				break;
+			}
+		}
+		echo "not enough splits: $splitcount \n";
+	}
+
 	$split[$splitcount] = $lastsplit;
-	$myFILE = fopen("splits/c"."$filename".".0.txt", "w");
-	$splitID = 0;
+	$myFILE = fopen("splits/c"."$filename".".1.txt", "w");
+	$splitID = 1;
 	$rowID = 0;
 	if (isset($out_image)) {
 		unset($out_image);
@@ -160,7 +209,9 @@
 	fclose($myFILE);
 	
 	foreach($out_image as $imageID => $imagemap) {
+		if ($imageID != 0) {
 		$IMGW = 30;
+
 		$IMGH = 50;
 		$dif = 0;
 		$realIMGRows = count($imagemap);
@@ -188,9 +239,10 @@
 
 
 		foreach($imagemap as $id => $line) {
-			echo "$id $line \n";
+			//@@echo "$id $line \n";
 		}
-		echo "\n";
+		//@@echo "\n";
+		}
 	}
 	}
 
