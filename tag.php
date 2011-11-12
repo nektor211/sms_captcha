@@ -4,7 +4,7 @@ foreach ($_POST as $key=>$value) {
     $txt=substr_replace($key, ".txt", -4);
     $file=fopen("samples/".$txt,"w");
     if(strlen($value)==7){
-	    $v=str_split($value);
+	    $v=preg_split('//',$value);
 	    $value=trim(implode(' ',$v));
     }
     fwrite($file, $value);
