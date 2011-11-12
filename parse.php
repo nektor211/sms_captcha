@@ -232,7 +232,7 @@
 			fclose($myFILE);
 			$splitIDout = $splitID - 1;
 			if ($splitID <= $splitcount) { 
-				$myFILE = fopen("splits/c/c"."$filename".".$splitIDout.txt", "w");
+				$myFILE = fopen("splits/c/c"."$filename"."_$splitIDout.txt", "w");
 			}
 		}
 	}
