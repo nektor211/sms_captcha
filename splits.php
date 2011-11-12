@@ -3,13 +3,15 @@ error_reporting(E_ALL);
 foreach ($_POST as $key=>$value) {
   if(strstr($key, "_")){
     $txt=substr_replace($key, ".txt", -1);
-    $file="splits/".$txt;
+    $file="splits/txt/".$txt;
     if(!file_exists($file)){
       $fh=fopen($file,"w");
       fwrite($fh, $value);
       fclose($fh);
 		}else{
 		  $f=file($file);
+		  $f[0].='';
+		  echo $value.$f[0]."<br>"; 
 		  if(trim($f[0])!=trim($value)){
         $fh=fopen($file,"w");
         fwrite($fh, $value);
@@ -29,7 +31,7 @@ while (false !== ($entry = $d->read())) {
   if(strstr($entry, ".png")){
     #echo $entry."\n";
     $txt=substr(substr_replace($entry, "txt", -5),1);
-    $txt_spl=substr(substr_replace($entry, "txt", -3),1);
+    echo $txt_spl="txt/".substr_replace($entry, "txt", -3);
     $pod=substr_replace($entry, "_", -4);
     $entrya=explode('.',$entry);
     

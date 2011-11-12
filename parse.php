@@ -180,7 +180,7 @@
 	}
 
 	$split[$splitcount] = $lastsplit;
-	$myFILE = fopen("splits/c"."$filename".".0.txt", "w");
+	$myFILE = fopen("splits/c/c"."$filename".".0.txt", "w");
 	//echo $myFILE."\n";
 	$splitID = 1;
 	$rowID = 0;
@@ -232,7 +232,7 @@
 			fclose($myFILE);
 			$splitIDout = $splitID - 1;
 			if ($splitID <= $splitcount) { 
-				$myFILE = fopen("splits/c"."$filename".".$splitIDout.txt", "w");
+				$myFILE = fopen("splits/c/c"."$filename".".$splitIDout.txt", "w");
 			}
 		}
 	}
@@ -264,7 +264,7 @@
 			}		
 		}
 		$imageIDout = $imageID - 1;
-		imagepng($out_image, "splits/s"."$filename".".$imageIDout.png");
+		imagepng($out_image, "splits/png/s"."$filename"."_$imageIDout.png");
 
 
 		foreach($imagemap as $id => $line) {
