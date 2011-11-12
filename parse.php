@@ -1,7 +1,29 @@
 <?php
 	$ImgID = rand(1, 84);
-	$img=imagecreatefromjpeg("samples/$ImgID.jpg");
-	echo "$ImgID";
+	
+	
+	$d = dir("samples");
+	$i = 0;
+	while (false !== ($entry = $d->read())) {
+	if (strstr($entry, ".jpg")){
+		$IID = str_replace(".jpg", "", $entry);
+		$filelist[$i]	= $IID;
+
+		echo "$IID\n";
+		$i++;
+	}
+
+	}$d->close();
+
+ $i = 0;
+  
+	 
+
+	
+	foreach($filelist as $id => $filename) {
+	
+	echo "$filename\n";
+	$img=imagecreatefromjpeg("samples/"."$filename".".jpg");
 	$sx=imagesx($img);
 	$sy=imagesy($img);
 	$bmp=imagecreate($sx,$sy);
@@ -44,7 +66,7 @@
 				}
 		}
 		
-		echo "$x $line \n" ;
+		//@@echo "$x $line \n" ;
 		$linemap[$x] = $line;
 		$countmap[$x] = $count;
 		//echo "$count \n";
@@ -55,7 +77,7 @@
 	$ROWS = count($countmap);
 	for ($id = 0; $id < $ROWS; $id++) {
 		$count = $countmap[$id];
-		echo "$id . $count \n";
+		//@@echo "$id . $count \n";
 
 		//if($spaceflag == 0) {
 			$rows_since_split++;
@@ -77,13 +99,13 @@
 					$rows_since_split = 0;
 					$split[$splitcount] = $id;
 					$splitcount++;
-					echo "split at $id long \n";
+					//@@echo "split at $id long \n";
 					
 				}
 			}
 			//spaceflag == 0, test for too long since split
 			else if($rows_since_split > $MAXROWS) { //too long no split
-				echo "hit ceil at $id \n" ;
+				//@@echo "hit ceil at $id \n" ;
 				$min = 100;
 				$splitRowID = 0;
 				for ($i = 0; $i < $rows_since_split - $MINROWS; $i++){
@@ -91,14 +113,14 @@
 					if ($tCount <= $min) {
 						$min = $tCount;
 						$splitRowID = $id - $i;
-						echo "min at $splitRowID : $min \n";
+						//@@echo "min at $splitRowID : $min \n";
 					}
 				}
 				$rows_since_split = 0;
 				$split[$splitcount] = $splitRowID;
 				$splitcount++;
 				$id = $splitRowID;
-				echo "split at $id \n";
+				//@@echo "split at $id \n";
 			}
 		}
 	}
@@ -109,8 +131,12 @@
 	}
 	
 	$split[$splitcount] = $lastsplit;
-	$myFILE = fopen("tmp/captcha0.txt", "w");
+	$myFILE = fopen("splits/c"."$filename".".0.txt", "w");
 	$splitID = 0;
+	$rowID = 0;
+	if (isset($out_image)) {
+		unset($out_image);
+	}
 	foreach ($linemap as $id => $line) {
 		$count = $countmap[$id];
 		if ($count > 0){
@@ -128,7 +154,7 @@
 		if ( ($id < $lastsplit) && ($id == $split[$splitID])){
 			$splitID++;
 			fclose($myFILE);
-			$myFILE = fopen("tmp/captcha$splitID.txt", "w");
+			$myFILE = fopen("splits/c"."$filename".".$splitID.txt", "w");
 		}
 	}
 	fclose($myFILE);
@@ -158,7 +184,7 @@
 			}		
 		}
 
-		imagepng($out_image, "tmp/s$imageID.png");
+		imagepng($out_image, "splits/s"."$filename".".$imageID.png");
 
 
 		foreach($imagemap as $id => $line) {
@@ -166,7 +192,7 @@
 		}
 		echo "\n";
 	}
-
+	}
 
 
 ?>
