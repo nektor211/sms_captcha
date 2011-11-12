@@ -36,7 +36,7 @@ while (false !== ($entry = $d->read())) {
     $entrya=explode('_',$entry);
     
     $i=$entrya[1];
-    if($lasti>$i) echo "<br>";
+    if($lasti>$i) echo "<br>".$txt;
     $lasti=$i;
     if(file_exists("splits/$txt_spl")){
 	  	$lines=file("splits/$txt_spl");
