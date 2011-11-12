@@ -134,26 +134,26 @@
 	fclose($myFILE);
 	
 	foreach($out_image as $imageID => $imagemap) {
-		$IMGW = 50;
-		$IMGH = 30;
-		
+		$IMGW = 30;
+		$IMGH = 50;
+		$dif = 0;
 		$realIMGRows = count($imagemap);
-		if ($realIMGRows < $IMGH) {
-			$dif = floor(($IMGH - $realIMGRows)/2);		
+		if ($realIMGRows < $IMGW) {
+			$dif = floor(($IMGW - $realIMGRows)/2);		
 		}
 		$out_image = imagecreatetruecolor($IMGW, $IMGH);
-		$black = imagecolorallocate($out_image, 0, 0, 0);
+		$black = imagecolorallocate($out_image, 0, 0, 30);
 		$white = imagecolorallocate($out_image, 255, 255, 255);
 
 		imagefilledrectangle($out_image, 0, 0, $IMGW, $IMGH, $black);
-		$hstart = $dif;
+		$wstart = $dif;
 		foreach($imagemap as $id => $line) {
 
-			for ($wpos = 0; $wpos < strlen($line); $wpos++){
+			for ($hpos = 0; $hpos < strlen($line); $hpos++){
 			//foreach($line as $wpos => $char){
-				$ch = $line[$wpos];
+				$ch = $line[$hpos];
 				if ($ch == "r"){
-					imagesetpixel($out_image, $wpos, $id+$hstart, $white);				
+					imagesetpixel($out_image, $id+$wstart, $hpos, $white);				
 				}			
 			}		
 		}
