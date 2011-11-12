@@ -7,6 +7,7 @@
 	$bmp=imagecreate($sx,$sy);
 	$black=imagecolorallocate($bmp,0,0,0);
 	$white=imagecolorallocate($bmp,255,255,255);
+	imagefilledrectangle($bmp, 0, 0, $sx, $sy, $black);
 	$spaceflag = 0;
 	$spacecount = 0;
 	$MINROWS = 13;
@@ -19,6 +20,7 @@
   
 	for($x=0;$x<$sx;++$x){	//x = row
 		$line="";
+		$lineraw = "";
 		$count=0;
 	  	
 			for($y=0;$y<$sy;++$y){	//y = col
@@ -29,6 +31,7 @@
 				$b = $rgb & 0xFF;
 				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
 					$line.= "r";
+					imagesetpixel($bmp, $x, $y, $white);
 					$count++;
 				}
 				else if ($r<30 && $g<30 && $b<30) {
@@ -47,7 +50,7 @@
 		//echo "$count \n";
 	  
 	}
-	imagejpeg($bmp,"out.jpg");
+	imagepng($bmp,"out.png");
 	$splitcount = 0;
 	$ROWS = count($countmap);
 	for ($id = 0; $id < $ROWS; $id++) {
@@ -104,11 +107,24 @@
 		$count = $countmap[$id];
 		$lastsplit = $id;	
 	}
+	
 	$split[$splitcount] = $lastsplit;
 	$myFILE = fopen("tmp/captcha0.txt", "w");
 	$splitID = 0;
 	foreach ($linemap as $id => $line) {
-		fwrite($myFILE, "$id ".$line."\n" );
+		$count = $countmap[$id];
+		if ($count > 0){
+			//$splitID["-1"] = 0;
+			if ($splitID == 0) {
+				$rowID = $id;
+			}
+			else {
+				$rowID = $id - $split[$splitID-1];
+			}
+			$out_image[$splitID][$rowID] = $line;
+			fwrite($myFILE, "$id ".$line."\n" );
+		}
+		
 		if ( ($id < $lastsplit) && ($id == $split[$splitID])){
 			$splitID++;
 			fclose($myFILE);
@@ -116,5 +132,41 @@
 		}
 	}
 	fclose($myFILE);
+	
+	foreach($out_image as $imageID => $imagemap) {
+		$IMGW = 50;
+		$IMGH = 30;
+		
+		$realIMGRows = count($imagemap);
+		if ($realIMGRows < $IMGH) {
+			$dif = floor(($IMGH - $realIMGRows)/2);		
+		}
+		$out_image = imagecreatetruecolor($IMGW, $IMGH);
+		$black = imagecolorallocate($out_image, 0, 0, 0);
+		$white = imagecolorallocate($out_image, 255, 255, 255);
+
+		imagefilledrectangle($out_image, 0, 0, $IMGW, $IMGH, $black);
+		$hstart = $dif;
+		foreach($imagemap as $id => $line) {
+
+			for ($wpos = 0; $wpos < strlen($line); $wpos++){
+			//foreach($line as $wpos => $char){
+				$ch = $line[$wpos];
+				if ($ch == "r"){
+					imagesetpixel($out_image, $wpos, $id+$hstart, $white);				
+				}			
+			}		
+		}
+
+		imagepng($out_image, "tmp/s$imageID.png");
+
+
+		foreach($imagemap as $id => $line) {
+			echo "$id $line \n";
+		}
+		echo "\n";
+	}
+
+
 
 ?>
