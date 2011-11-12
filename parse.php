@@ -181,38 +181,66 @@
 
 	$split[$splitcount] = $lastsplit;
 	$myFILE = fopen("splits/c"."$filename".".0.txt", "w");
+	//echo $myFILE."\n";
 	$splitID = 1;
 	$rowID = 0;
+	$written = 0;
+	$TXTH = 30;
+	$TXTW = 50;
+
+	$nullrow = "";
+	for ($i = 0; $i < $TXTW; $i++) {
+		$nullrow = $nullrow."w";
+	}
+
+	$i = 0;
+
+			//$splitID["-1"] = 0;
 	if (isset($out_image)) {
 		unset($out_image);
 	}
 	foreach ($linemap as $id => $line) {
 		$count = $countmap[$id];
 		if ($count > 0){
-			//$splitID["-1"] = 0;
-			if ($splitID == 0) {
-				$rowID = $id;
-			}
-			else {
-				$rowID = $id - $split[$splitID-1];
-			}
+			$rowID = $id - $split[$splitID-1];
 			$out_image[$splitID][$rowID] = $line;
-			fwrite($myFILE, "$id ".$line."\n" );
+			//fwrite($myFILE, "$id ".$line."\n" );
+			$written++;
 		}
 		
-		if ( ($id < $lastsplit) && ($id == $split[$splitID])){
+		if ( ($id <= $lastsplit) && ($id == $split[$splitID])){
+			$tdif = 0;
+			if ($written < $TXTH) {
+				$tdif = floor(($TXTH - $written)/2);
+				//fwrite ($myFILE, $tdif."\n");
+			}
+			//echo $myFILE."\n";
+			for($w = 0; $w < $tdif; $w++) {
+				fwrite($myFILE, $nullrow."\n");
+			}
+			foreach ($out_image[$splitID] as $id => $line) {
+				if ($w >= 30) break;
+				fwrite($myFILE, $line."\n");
+				$w++;
+			}
+			for(; $w < $TXTH; $w++) {
+				fwrite($myFILE, $nullrow."\n");
+			}
+			$w = 0;
+			$written = 0;
 			$splitID++;
 			fclose($myFILE);
 			$splitIDout = $splitID - 1;
-			$myFILE = fopen("splits/c"."$filename".".$splitIDout.txt", "w");
+			if ($splitID <= $splitcount) { 
+				$myFILE = fopen("splits/c"."$filename".".$splitIDout.txt", "w");
+			}
 		}
 	}
-	fclose($myFILE);
+	//fclose($myFILE);
 	
 	foreach($out_image as $imageID => $imagemap) {
 		if ($imageID != 0) {
 		$IMGW = 30;
-
 		$IMGH = 50;
 		$dif = 0;
 		$realIMGRows = count($imagemap);
