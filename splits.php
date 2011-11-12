@@ -22,7 +22,7 @@ foreach ($_POST as $key=>$value) {
 }
 
 echo '<form action="debug.php" method="post">';
-$d = dir("splits");
+$d = dir("splits/png");
 
 //$all;
 $lasti=0;
@@ -31,9 +31,9 @@ while (false !== ($entry = $d->read())) {
   if(strstr($entry, ".png")){
     #echo $entry."\n";
     $txt=substr(substr_replace($entry, "txt", -5),1);
-    echo $txt_spl="txt/".substr_replace($entry, "txt", -3);
+    $txt_spl="txt/".substr_replace($entry, "txt", -3);
     $pod=substr_replace($entry, "_", -4);
-    $entrya=explode('.',$entry);
+    $entrya=explode('_',$entry);
     
     $i=$entrya[1];
     if($lasti>$i) echo "<br>";
@@ -63,7 +63,7 @@ while (false !== ($entry = $d->read())) {
 	  	$all[$txt][].="";
 		}
 	//echo $data."\n";
-	echo "<image src=\"splits/$entry\" />".$all[$txt][$i]."|\n";
+	echo "<image src=\"splits/png/$entry\" />".$all[$txt][$i]."|\n";
 	echo "<input type=\"text\" name=\"$pod\" value=\"".$all[$txt][$i]."\" size=1 />";
   }
 }
