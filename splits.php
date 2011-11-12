@@ -11,7 +11,7 @@ foreach ($_POST as $key=>$value) {
 		}else{
 		  $f=file($file);
 		  $f[0].='';
-		  echo $value.$f[0]."<br>"; 
+		  //echo $value.$f[0]."<br>"; 
 		  if(trim($f[0])!=trim($value)){
         $fh=fopen($file,"w");
         fwrite($fh, $value);
