@@ -150,7 +150,7 @@
 		
 		}
 		echo "found longest section at $maxsplitID, ";
-		$MINROWSred = 6;
+		$MINROWSred = 10;
 		$mincount = 100;
 		$minrow = 0;
 		$istart = $split[$maxsplitID - 1] + $MINROWSred;
