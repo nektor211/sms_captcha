@@ -1,10 +1,10 @@
 <?php 
 	
 	
-	$myFILEout = fopen("splits/data.txt", "a");
+	$myFILEout = fopen("splits/features.txt", "w");
 	
 	$d = dir("splits/c");
-	
+
 	while(false != ($entry = $d->read()) ) {
 		
 	 if ((strstr($entry, "c")) && (strstr($entry, ".txt"))) {
@@ -23,6 +23,41 @@
 			fclose($myFILEin);
 		}
 	}
+	//fclose($myFILEout);
+
+	$myFILEoutT = fopen("splits/tags.txt", "w"); 
+	$d = dir("splits/txt");
+	while(false != ($entry = $d->read())) {
+		if ((strstr($entry, "s")) && (strstr($entry, ".txt"))){
+			$myFILEin = fopen("splits/txt/$entry", "r");
+			if (!feof($myFILEin)) $i = fgetc($myFILEin);
+			fwrite($myFILEoutT, "$i\n");
+			fclose($myFILEin);		
+		}	
+	}
+
+
+
 	fclose($myFILEout);
+	fclose($myFILEoutT);
+
+
+	$fileF = fopen("splits/features.txt", "r");
+	$fileT = fopen("splits/tags.txt", "r");
+	$FILEout = fopen("data.txt", "w");
+
+	while (!feof($fileT) && !feof($fileF)) {
+		$line = trim(fgets($fileF));
+		$tag = trim(fgets($fileT));
+		if ($tag != 0) {
+			fwrite($FILEout, $line." ".$tag."\n");
+		}
+	}
+	fclose($fileF);
+	fclose($fileT);
+	fclose($FILEout);
+
+
+
 
 ?>
