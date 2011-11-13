@@ -25,6 +25,8 @@ $d = dir("splits/png");
 echo '<div style="font-family: courier">';
 //$all;
 $lasti=0;
+$od=(int)$_GET['od'];
+$do=(int)$_GET['do'];
 
 while (false != ($entry = $d->read())) {
   if(strstr($entry, ".png")){
@@ -34,7 +36,11 @@ while (false != ($entry = $d->read())) {
     $entrya=explode('_',$entry);
     
     $i=$entrya[1];
+    $id=(int)substr($entrya[0],1);
+    if(($do!=0||$od!=0) &&( $id>$do || $id<$do))continue;
+    
     if($lasti>$i) echo "<br>";
+    if($i==0) echo $entrya[0];
     $lasti=$i;
     if(file_exists("splits/$txt_spl")){
 	  	$lines=file("splits/$txt_spl");
