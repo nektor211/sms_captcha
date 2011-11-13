@@ -11,7 +11,6 @@ foreach ($_POST as $key=>$value) {
 		}else{
 		  $f=file($file);
 		  $f[0].='';
-		  //echo $value.$f[0]."<br>"; 
 		  if(trim($f[0])!=trim($value)){
         $fh=fopen($file,"w");
         fwrite($fh, $value);
@@ -21,26 +20,24 @@ foreach ($_POST as $key=>$value) {
   }
 }
 
-echo '<form action="debug.php" method="post">';
+echo '<form action="debuga.php" method="post">';
 $d = dir("splits/png");
-
+echo '<div style="font-family: courier">';
 //$all;
 $lasti=0;
 
-while (false !== ($entry = $d->read())) {
+while (false != ($entry = $d->read())) {
   if(strstr($entry, ".png")){
-    #echo $entry."\n";
     $txt=substr(substr_replace($entry, "txt", -5),1);
     $txt_spl="txt/".substr_replace($entry, "txt", -3);
-    $pod=substr_replace($entry, "_", -4);
+		$pod=substr_replace($entry, "_", -4);
     $entrya=explode('_',$entry);
     
     $i=$entrya[1];
-    if($lasti>$i) echo "<br>".$txt;
+    if($lasti>$i) echo "<br>";
     $lasti=$i;
     if(file_exists("splits/$txt_spl")){
 	  	$lines=file("splits/$txt_spl");
-	  	
 	  	if (isset ($lines[0])) {
 				$all[$txt][$i]=chop($lines[0]);
 			}
@@ -50,7 +47,6 @@ while (false !== ($entry = $d->read())) {
 	  }elseif((!isset($all[$txt])) && file_exists("samples/$txt")){
 	  	
 			$lines=file("samples/$txt");
-	  	
 			if (isset ($lines[0])) {
 				$all[$txt]=explode(' ',chop($lines[0]));
 				
@@ -67,6 +63,7 @@ while (false !== ($entry = $d->read())) {
 	echo "<input type=\"text\" name=\"$pod\" value=\"".$all[$txt][$i]."\" size=1 />";
   }
 }
+echo '</div>';
 echo "<input type=\"submit\"></form>";
 $d->close();
 ?> 
