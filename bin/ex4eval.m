@@ -32,15 +32,16 @@ num_labels = 9;          % 10 labels, from 1 to 10
 % Load Training Data
 fprintf('Loading and Visualizing Data ...\n')
 
-load('features.txt');
+load('data.txt');
 load('Theta1.mat');
 load('Theta2.mat');
-X = features; 
+X = data(:, 1:size(data, 2) - 1); 
+y = data(:, end);
 m = size(X, 1);
 
 % Randomly select 100 data points to display
-sel = randperm(size(X, 1));
-sel = sel(1:100);
+%sel = randperm(size(X, 1));
+%sel = sel(1:100);
 
 %displayData(X(sel, :));
 
@@ -108,15 +109,15 @@ lambda = 1;
 %  code in the sigmoidGradient.m file.
 %
 
-fprintf('\nEvaluating sigmoid gradient...\n')
+%fprintf('\nEvaluating sigmoid gradient...\n')
 
-g = sigmoidGradient([1 -0.5 0 0.5 1]);
-fprintf('Sigmoid gradient evaluated at [1 -0.5 0 0.5 1]:\n  ');
-fprintf('%f ', g);
-fprintf('\n\n');
+%g = sigmoidGradient([1 -0.5 0 0.5 1]);
+%fprintf('Sigmoid gradient evaluated at [1 -0.5 0 0.5 1]:\n  ');
+%fprintf('%f ', g);
+%fprintf('\n\n');
 
-fprintf('Program paused. Press enter to continue.\n');
-pause;
+%fprintf('Program paused. Press enter to continue.\n');
+%pause;
 
 
 %% ================ Part 6: Initializing Pameters ================
@@ -225,7 +226,7 @@ pause;
 %  you compute the training set accuracy.
 
 pred = predict(Theta1, Theta2, X);
-save('-ascii', 'results.txt', 'pred');
-%fprintf('\nEval Accuracy: %f\n', mean(double(pred == y)) * 100);
+%save('-ascii', 'results.txt', 'pred');
+fprintf('\nEval Accuracy: %f\n', mean(double(pred == y)) * 100);
 
 

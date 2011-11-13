@@ -23,10 +23,10 @@ octavedir="bin";
 	fi;
 	
 	
-if [ "$1" == "-t" ]; then
+if [ "$1" == "-t" -o "$1" == "-e" ]; then
 	numlistF=`(for i in \`ls $featuredir\`; do echo $i | sed 's/^c\(.*\)_\(.*\)\.txt$/\1\.\2/'; done;) | sort -n | uniq`
 
-  echo "$numlistF";
+  #echo "$numlistF";
 	minF=`echo "$numlistF" | head -n 1;`
 	maxF=`echo "$numlistF" | tail -n 1;`
 
@@ -94,30 +94,45 @@ if [ "$1" == "-t" ]; then
 	done;
 	g2g=1;
 
-	if [ -f "$octavedir/Theta1.mat" -o -f "$octavedir/Theta2.mat" ]; then
-		g2g=0;
-		echo "data already trained, remove? (cannot retrain if data nor removed)";
-		read c;
-		if [ "$c" == "y" ]; then
-			rm -f "$octavedir/Theta1.mat";
-			rm -f "$octavedir/Theta2.mat";
-			g2g=1;
 
+	if [ "$1" == "-t" ]; then
+		if [ -f "$octavedir/Theta1.mat" -o -f "$octavedir/Theta2.mat" ]; then
+			g2g=0;
+			echo "data already trained, remove? (cannot retrain if data nor removed)";
+			read c;
+			if [ "$c" == "y" ]; then
+				rm -f "$octavedir/Theta1.mat";
+				rm -f "$octavedir/Theta2.mat";
+				g2g=1;
+	
+			fi;
 		fi;
-
-
-	fi;
-	curdir=`pwd`;
-	if [ $g2g -eq 1 ]; then
-		php unroll.php temp/features temp/tags "$octavedir";
-		cd "$octavedir";
-		octave ex4train.m
-		cd "$curdir";
-	fi;
+		curdir=`pwd`;
+		if [ $g2g -eq 1 ]; then
+			php unroll.php temp/features temp/tags "$octavedir";
+			cd "$octavedir";
+			octave ex4train.m
+			cd "$curdir";
+		fi;
+		rm -rf temp;
 	
+	elif [ "$1" == "-e" ] 
+		if [ -f "$octavedir/Theta1.mat" -a -f "$octavedir/Theta2.mat" ]; then
+			php unroll.php temp/features temp/tags "$octavedir";
+			cd "$octavedir";
+			octave ex4eval.m
+			cd "$curdir";
+		else 
+			echo "neural netowrk not trained yet, please train before evaluation";
+			echo "aborting";			
+		fi;
+		rm -rf temp;
 	
+	fi;
 
 
-	rm -rf temp;
+
+
+
 
 fi;
