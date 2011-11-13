@@ -20,7 +20,7 @@ foreach ($_POST as $key=>$value) {
   }
 }
 
-echo '<form action="debuga.php" method="post">';
+echo '<form action="splits.php" method="post">';
 $d = dir("splits/png");
 echo '<div style="font-family: courier">';
 //$all;

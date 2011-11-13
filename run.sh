@@ -116,7 +116,7 @@ if [ "$1" == "-t" -o "$1" == "-e" ]; then
 		fi;
 		rm -rf temp;
 	
-	elif [ "$1" == "-e" ] 
+	elif [ "$1" == "-e" ]; then 
 		if [ -f "$octavedir/Theta1.mat" -a -f "$octavedir/Theta2.mat" ]; then
 			php unroll.php temp/features temp/tags "$octavedir";
 			cd "$octavedir";

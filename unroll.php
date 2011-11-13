@@ -41,7 +41,7 @@
 			$myFILEin = fopen("$tagdir/$entry", "r");
 
 			if (!feof($myFILEin)) $i = fgetc($myFILEin);
-			echo "writing tag $i from file $entry";
+			//echo "writing tag $i from file $entry";
 			fwrite($myFILEoutT, "$i\n");
 			fclose($myFILEin);		
 		}	
