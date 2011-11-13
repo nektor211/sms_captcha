@@ -180,7 +180,7 @@
 	}
 
 	$split[$splitcount] = $lastsplit;
-	$myFILE = fopen("splits/c/c"."$filename".".0.txt", "w");
+	$myFILE = fopen("splits/c/c"."$filename"."_0.txt", "w");
 	//echo $myFILE."\n";
 	$splitID = 1;
 	$rowID = 0;
