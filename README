@@ -2,11 +2,11 @@ loc=~/neco #cesta k repo, cela (napr pres ~)
 WWW=~/WWW #cesla k WWW
 ln -s ${loc}/samples ${WWW}/samples
 ln -s ${loc}/tag.php ${WWW}/tag.php
-ln ${loc}/tmp ${WWW}/tmp -s
 ln ${loc}/splits ${WWW}/splits -s
 ln ${loc}/splits.php ${WWW}/splits.php -s
 
 fs setacl ${WWW} www read
+fs setacl ${loc} www read
 fs setacl ${loc}/samples www read
 fs setacl ${loc}/samples www write
 fs setacl ${WWW}/samples www write
