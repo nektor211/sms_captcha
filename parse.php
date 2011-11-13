@@ -20,7 +20,7 @@
 	 
 
 	
-	foreach($filelist as $id => $filename) {
+foreach($filelist as $id => $filename) {
 	
 	echo "$filename\n";
 	$img=imagecreatefromjpeg("samples/"."$filename".".jpg");
@@ -40,27 +40,109 @@
 	
 	// echo "$sx $sy \n";
   
+  unset ($matrix);
+  unset ($stackx);
+  unset ($stacky);
+  
 	for($x=0;$x<$sx;++$x){	//x = row
-		$line="";
+		/*$line="";
 		$lineraw = "";
-		$count=0;
+		$count=0;*/
 	  	
-			for($y=0;$y<$sy;++$y){	//y = col
-
+		for($y=0;$y<$sy;++$y){	//y = col
 				$rgb = imagecolorat($img, $x, $y);
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
 				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
-					$line.= "r";
+					//$line.= "r";
 					imagesetpixel($bmp, $x, $y, $white);
-					$count++;
+					//$count++;
+					$matrix[$x][$y]="r";
 				}
 				else if ($r<30 && $g<30 && $b<30) {
+					//$line.= "b";
+					$matrix[$x][$y]="b";
+					$stackx[]=$x;
+					$stacky[]=$y;
+				}
+				else {
+					//$line.= "w";
+					$matrix[$x][$y]="w";
+				}
+		}
+		
+		//@@echo "$x $line \n" ;
+		//$linemap[$x] = $line;
+		//$countmap[$x] = $count;
+		//echo "$count \n";
+	  
+	}
+	
+	//pokus o pripojovani souvislych oblasti v cerne
+	$stackx[]=-1;
+	while($cx=array_shift($stackx)){
+	  if($cx==-1){
+	    $change=0;
+	    while($rx=array_shift($stackrx)){
+			  $ry=array_shift($stackry);
+			  $matrix[$rx][$ry]="r";
+			  imagesetpixel($bmp, $rx, $ry, $white);
+			  $change=1;
+			}
+			while($wx=array_shift($stackwx)){
+			  $wy=array_shift($stackwy);
+			  $matrix[$wx][$wy]="w";
+			  $change=1;
+			}
+			if($change){
+			  $stackx[]=-1;
+			  continue;
+			}else{
+			  break;
+			}
+		}
+	  $cy=array_shift($stacky);
+    $neigh['w']=0;
+    $neigh['r']=0;
+		$neigh['b']=0;
+		$sum=0;
+	  for($ox=-2;$ox<3;$ox++){
+		  for($oy=-2;$oy<3;$oy++){
+		    if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
+			    $neigh[$matrix[$cx+$ox][$cy+$oy]]+=5-abs($ox)-abs($oy);
+			    $sum+=5-abs($ox)-abs($oy);
+			  }
+			}
+		}
+		if($neigh["r"]>=0.28*$sum){
+			$stackrx[]=$cx;
+			$stackry[]=$cy;
+	    echo "$cx $cy\n";
+  	}elseif($neigh["w"]>=0.5*$sum){
+	    echo "w$cx $cy\n";
+			$stackwx[]=$cx;
+			$stackwy[]=$cy;
+		}else{
+	    echo "_$cx $cy\n";
+			$stackx[]=$cx;
+			$stacky[]=$cy;
+		}
+	}
+	//zapsani pokusu do pouzivanych dat
+	for($x=0;$x<$sx;++$x){	//x = row
+		$line="";
+		$lineraw = "";
+		$count=0;
+	  	
+		for($y=0;$y<$sy;++$y){	//y = col
+				if($matrix[$x][$y]=="r"){
+					$line.= "r";
+					$count++;
+				}
+				else if ($matrix[$x][$y]=="b") {
 					$line.= "b";
 				}
-
-
 				else {
 					$line.= "w";
 				}
@@ -72,6 +154,9 @@
 		//echo "$count \n";
 	  
 	}
+//konec pokusu
+	
+	
 	imagepng($bmp,"out.png");
 	$splitcount = 0;
 	$ROWS = count($countmap);
@@ -273,7 +358,7 @@
 		//@@echo "\n";
 		}
 	}
-	}
+}
 
 
 ?>
