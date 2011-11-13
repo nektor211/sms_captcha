@@ -1,5 +1,5 @@
-loc=#cesta k repo, cela (napr pres ~)
-WWW=#cesla k WWW
+loc=~/neco #cesta k repo, cela (napr pres ~)
+WWW=~/WWW #cesla k WWW
 ln -s ${loc}/samples ${WWW}/samples
 ln -s ${loc}/tag.php ${WWW}/tag.php
 ln ${loc}/tmp ${WWW}/tmp -s
