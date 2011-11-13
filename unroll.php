@@ -1,14 +1,23 @@
 <?php 
+
+	$featuredir = "splits/c";
+	$tagdir = "splits/txt";
+	$outdir = "splits";
 	
+	if (isset($argv[1])) $featuredir = $argv[1];
+	if (isset($argv[2])) $tagdir = $argv[2];
+	if (isset($argv[3])) $outdir = $argv[3];
 	
-	$myFILEout = fopen("splits/features.txt", "w");
+
+
+	$myFILEout = fopen("$featuredir/features.txt", "w");
 	
-	$d = dir("splits/c");
+	$d = dir("$featuredir");
 
 	while(false != ($entry = $d->read()) ) {
 		
 	 if ((strstr($entry, "c")) && (strstr($entry, ".txt"))) {
-			$myFILEin = fopen("splits/c/$entry", "r");
+			$myFILEin = fopen("$featuredir/$entry", "r");
 			while (!feof($myFILEin)) {
 				$c = fgetc($myFILEin);
 				if($c == 'r') {
@@ -25,12 +34,14 @@
 	}
 	//fclose($myFILEout);
 
-	$myFILEoutT = fopen("splits/tags.txt", "w"); 
-	$d = dir("splits/txt");
+	$myFILEoutT = fopen("$tagdir/tag.txt", "w"); 
+	$d = dir("$tagdir");
 	while(false != ($entry = $d->read())) {
 		if ((strstr($entry, "s")) && (strstr($entry, ".txt"))){
-			$myFILEin = fopen("splits/txt/$entry", "r");
+			$myFILEin = fopen("$tagdir/$entry", "r");
+
 			if (!feof($myFILEin)) $i = fgetc($myFILEin);
+			echo "writing tag $i from file $entry";
 			fwrite($myFILEoutT, "$i\n");
 			fclose($myFILEin);		
 		}	
@@ -42,9 +53,9 @@
 	fclose($myFILEoutT);
 
 
-	$fileF = fopen("splits/features.txt", "r");
-	$fileT = fopen("splits/tags.txt", "r");
-	$FILEout = fopen("data.txt", "w");
+	$fileF = fopen("$featuredir/features.txt", "r");
+	$fileT = fopen("$tagdir/tag.txt", "r");
+	$FILEout = fopen("$outdir/data.txt", "w");
 
 	while (!feof($fileT) && !feof($fileF)) {
 		$line = trim(fgets($fileF));

@@ -1,14 +1,17 @@
 <?php 
 	
+	$featuredir = "splits/c"	
+
+
+	if (isset($1)) $featuredir = $1;
+	$myFILEout = fopen("$featuredir/features.txt", "w");
 	
-	$myFILEout = fopen("splits/features.txt", "w");
-	
-	$d = dir("splits/c");
+	$d = dir("$featuredir");
 
 	while(false != ($entry = $d->read()) ) {
 		
 	 if ((strstr($entry, "c")) && (strstr($entry, ".txt"))) {
-			$myFILEin = fopen("splits/c/$entry", "r");
+			$myFILEin = fopen("$featuredir/$entry", "r");
 			while (!feof($myFILEin)) {
 				$c = fgetc($myFILEin);
 				if($c == 'r') {
