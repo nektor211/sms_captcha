@@ -1,14 +1,23 @@
+#!/usr/bin/php
 <?php
-	$ImgID = rand(1, 84);
-	
+	//$ImgID = rand(1, 84);
+	if($argc==3){
+	  $od=$argv[1];
+	  echo "od $od\n";
+	  $do=$argv[2];
+	  echo "do $do\n";
+	}else{
+	  $od=0;
+	  $do=0;
+	}
 	
 	$d = dir("samples");
 	$i = 0;
 	while (false !== ($entry = $d->read())) {
 	if (strstr($entry, ".jpg")){
-		$IID = str_replace(".jpg", "", $entry);
+		$IID = (int)str_replace(".jpg", "", $entry);
+    if(( $od!=0 || $do!=0 )&&( $IID>$do || $IID<$od))continue;
 		$filelist[$i]	= $IID;
-
 		echo "$IID\n";
 		$i++;
 	}
