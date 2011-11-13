@@ -18,6 +18,33 @@
  $i = 0;
   
 	 
+$dirx[0]=1;
+$diry[0]=0;
+$dirc[]=1;
+$dirx[1]=1;
+$diry[1]=1;
+$dirc[]=1;
+$dirx[2]=0;
+$diry[2]=1;
+$dirc[]=1;
+$dirx[3]=1;
+$diry[3]=-1;
+$dirc[]=1;
+$dirx[]=2;
+$diry[]=1;
+$dirc[]=1.5;
+$dirx[]=1;
+$diry[]=2;
+$dirc[]=1.5;
+$dirx[]=-2;
+$diry[]=1;
+$dirc[]=1.5;
+$dirx[]=-1;
+$diry[]=2;
+$dirc[]=1.5;
+
+$pavel_pokusy=0;//1 slevani, 2 spojovani dle vzdalenosti.
+
 
 	
 foreach($filelist as $id => $filename) {
@@ -56,11 +83,12 @@ foreach($filelist as $id => $filename) {
 				$b = $rgb & 0xFF;
 				if($r>100 && $g<100 && $g<220 && $b>100 && $b<200){
 					//$line.= "r";
-					imagesetpixel($bmp, $x, $y, $white);
 					//$count++;
 					$matrix[$x][$y]="r";
+					$stackr_x[]=$x;
+					$stackr_y[]=$y;
 				}
-				else if ($r<30 && $g<30 && $b<30) {
+				else if ($r<80 && $g<80 && $b<80) {
 					//$line.= "b";
 					$matrix[$x][$y]="b";
 					$stackx[]=$x;
@@ -79,15 +107,111 @@ foreach($filelist as $id => $filename) {
 	  
 	}
 	
+	
+if($pavel_pokusy!=0){	//START pavel
+
 	//pokus o pripojovani souvislych oblasti v cerne
-	$stackx[]=-1;
+	for($y=0;$y<$sy;++$y){	//x = row
+		for($x=0;$x<$sx;++$x){
+		  echo $matrix[$x][$y];
+		}
+		echo"\n";
+	}
+	//odstraneni r s <=1 sousedem
+	while($cx=array_shift($stackr_x)){
+	  $cy=array_shift($stackr_y);
+	  $neigh=0;
+	  for($ox=-1;$ox<2;$ox++){
+		  for($oy=-1;$oy<2;$oy++){
+		    if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
+		      if($matrix[$cx+$ox][$cy+$oy]=='r')
+		        $neigh++;
+			  }
+			}
+		}
+		if($neigh<2){
+		  $stackrrx[]=$cx;
+		  $stackrry[]=$cy;
+		}
+	}
+	
+	while(isset($stackrrx) && $rx=array_shift($stackrrx)){
+	  $ry=array_shift($stackrry);
+	  $matrix[$rx][$ry]="B";
+		$stackx[]=$cx;
+		$stacky[]=$cy;
+	}	
+	for($y=0;$y<$sy;++$y){	//x = row
+		for($x=0;$x<$sx;++$x){
+		  echo $matrix[$x][$y];
+		}
+		echo"\n";
+	}
+	//odstraneno
+	
 	while($cx=array_shift($stackx)){
+	  $cy=array_shift($stacky);
+	  $bestr=10000;
+	  $best=10000;
+	  for($i=0;$i<8;$i++){
+		  $curr=0;
+		  $end1='';
+		  $end2='';
+		  for($j=0;($cx+$j*$dirx[$i]<$sx)&&($cx+$j*$dirx[$i]>=0)&&($cy+$j*$diry[$i]<$sy)&&($cy+$j*$diry[$i]>=0);$j++){
+		    $curr+=$dirc[$i];
+		    if($matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]]!='b'){
+				  $end1=$matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]];
+				  break;
+				}
+			}
+		  for($j=0;($cx-$j*$dirx[$i]<$sx)&&($cx-$j*$dirx[$i]>=0)&&($cy-$j*$diry[$i]<$sy)&&($cy-$j*$diry[$i]>=0);$j++){
+		    $curr+=$dirc[$i];
+		    if($matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]]!='b'){
+				  $end2=$matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]];
+				  break;
+				}
+			}
+			if($end1=='r' && $end2=='r' && $curr<$bestr){
+			  $bestr=$curr;
+			}
+			if($curr<$best){
+			  $best=$curr;
+			}
+		}
+		if($bestr<3*$best){
+		  //file_put_contents('php://stderr', "hmm\n");
+			$stackrx[]=$cx;
+			$stackry[]=$cy;
+		}else{
+		  //file_put_contents('php://stderr', "$bestr $end1 $end2\n");
+			$stackwx[]=$cx;
+			$stackwy[]=$cy;
+		}
+	}
+	while(isset($stackrx) && $rx=array_shift($stackrx)){
+	  $ry=array_shift($stackry);
+	  $matrix[$rx][$ry]="r";
+	}
+	while($wx=array_shift($stackwx)){
+	  $wy=array_shift($stackwy);
+	  $matrix[$wx][$wy]="w";
+	}
+	echo "\n";
+	for($y=0;$y<$sy;++$y){	//x = row
+		for($x=0;$x<$sx;++$x){
+		  echo $matrix[$x][$y];
+		}
+		echo"\n";
+	}
+	
+	
+	$stackx[]=-1;
+	while($pavel_pokusy==1 && $cx=array_shift($stackx)){//pokus o pripojovani souvislych oblasti
 	  if($cx==-1){
 	    $change=0;
 	    while($rx=array_shift($stackrx)){
 			  $ry=array_shift($stackry);
 			  $matrix[$rx][$ry]="r";
-			  imagesetpixel($bmp, $rx, $ry, $white);
 			  $change=1;
 			}
 			while($wx=array_shift($stackwx)){
@@ -129,6 +253,9 @@ foreach($filelist as $id => $filename) {
 			$stacky[]=$cy;
 		}
 	}
+}//END pavel
+
+
 	//zapsani pokusu do pouzivanych dat
 	for($x=0;$x<$sx;++$x){	//x = row
 		$line="";
@@ -138,6 +265,7 @@ foreach($filelist as $id => $filename) {
 		for($y=0;$y<$sy;++$y){	//y = col
 				if($matrix[$x][$y]=="r"){
 					$line.= "r";
+	        imagesetpixel($bmp, $x, $y, $white);
 					$count++;
 				}
 				else if ($matrix[$x][$y]=="b") {
@@ -148,7 +276,7 @@ foreach($filelist as $id => $filename) {
 				}
 		}
 		
-		//@@echo "$x $line \n" ;
+		//echo "$x $line \n" ;
 		$linemap[$x] = $line;
 		$countmap[$x] = $count;
 		//echo "$count \n";
