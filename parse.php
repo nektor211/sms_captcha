@@ -52,7 +52,7 @@ $dirx[]=-1;
 $diry[]=2;
 $dirc[]=1.5;*/
 
-$pavel_pokusy=3;//1 slevani, 2 spojovani dle vzdalenosti,3....
+$pavel_pokusy=0;//1 slevani, 2 spojovani dle vzdalenosti,3....
 
 
   
@@ -540,7 +540,9 @@ foreach($filelist as $id => $filename) {
     }
     echo "not enough splits: $splitcount \n";
   }
-  
+ 	 
+	$split[$splitcount] = $lastsplit;
+
   
 	$kuba_pokusy = 1;
 	
@@ -558,14 +560,12 @@ foreach($filelist as $id => $filename) {
 			}
 			$i = 0;
 			if ($minID >= -1) {
-				for ($i = $minID; $i <= $splitcount; $i++ ){
+				for ($i = $minID; $i < $splitcount; $i++ ){
 					$split[$i] = $split[$i+1];
-					
 				}
 				$splitcount--;
 				$i = 0;
 			}
-		
 		}		
 		for ($i = 0; $i < $splitcount; $i++){
 			$clc[$i] = round(($split[$i+1] + $split[$i]) / 2);		
@@ -621,7 +621,6 @@ foreach($filelist as $id => $filename) {
 	echo "cluster centers end\n";
 
 
-	$split[$splitcount] = $lastsplit;
   $myFILE = fopen("splits/c/c"."$filename"."_0.txt", "w");
   //echo $myFILE."\n";
   $splitID = 1;
