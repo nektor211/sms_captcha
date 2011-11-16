@@ -135,7 +135,7 @@ foreach($filelist as $id => $filename) {
       echo"\n";
     }
     if($pavel_pokusy==4){
-      //odstraneni r s <=1 sousedem
+      //odstraneni r s <=1 sousedem - zk
       while($cx=array_shift($stackr_x)){
         $cy=array_shift($stackr_y);
         $neigh=0;
@@ -156,7 +156,10 @@ foreach($filelist as $id => $filename) {
 
       while(isset($stackrrx) && $rx=array_shift($stackrrx)){
         $ry=array_shift($stackrry);
-        $matrix[$rx][$ry]="B";
+        $matrix[$rx][$ry]="w";
+        $matr[$rx][$ry]=255;
+        $matg[$rx][$ry]=255;
+        $matb[$rx][$ry]=255;
         $stackx[]=$cx;
         $stacky[]=$cy;
       }  
@@ -376,7 +379,13 @@ foreach($filelist as $id => $filename) {
            $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
            $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
            if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
-             imagesetpixel($img,$x,$y,$green_img);
+             imagesetpixel($img,$x,$y,$green_img);//white
+             $matrix[$x][$y]="w";
+					 }else{
+             $matrix[$x][$y]="r";
+					   if($rg+$rb+$bg<3000 ){
+               imagesetpixel($img,$x,$y,$blue_img);
+             }
 					 }
         }
       }
@@ -389,9 +398,6 @@ foreach($filelist as $id => $filename) {
         echo"\n";
       }
 
-
-      imagepng($img,"out.png");
-      die;
 
     }//pokusy 3
 
@@ -428,7 +434,7 @@ foreach($filelist as $id => $filename) {
 //konec pokusu
   
   
-  imagepng($img,"out.png");
+  imagepng($img,"tmp/$id.png");
   $splitcount = 0;
   $ROWS = count($countmap);
   for ($id = 0; $id < $ROWS; $id++) {
@@ -629,7 +635,6 @@ foreach($filelist as $id => $filename) {
     //@@echo "\n";
     }
   }
-die;
 }
 
 
