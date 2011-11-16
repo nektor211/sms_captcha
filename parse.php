@@ -540,8 +540,88 @@ foreach($filelist as $id => $filename) {
     }
     echo "not enough splits: $splitcount \n";
   }
+  
+  
+	$kuba_pokusy = 1;
+	
+	if ($kuba_pokusy == 1 ) {
+		while ($splitcount >= 8)	{
+			$SID = 1;
+			$min = 200;
+			$minID = -1;
+			for ($i = $SID; $i < $splitcount; $i++) {
+				$lsum = $split[$i+1] - $split[$i-1];
+				if ($lsum < $min){
+					$min = $lsum;
+					$minID = $i;
+				}			
+			}
+			$i = 0;
+			if ($minID >= -1) {
+				for ($i = $minID; $i <= $splitcount; $i++ ){
+					$split[$i] = $split[$i+1];
+					
+				}
+				$splitcount--;
+				$i = 0;
+			}
+		
+		}		
+		for ($i = 0; $i < $splitcount; $i++){
+			$clc[$i] = round(($split[$i+1] + $split[$i]) / 2);		
+		
+			echo "$i. cluster center at $clc[$i]\n ";
+			$clcoffset[$i] = 0;
+			$clccount[$i] = 0;
+		}
+		$Fchange = true;
+		$limit = 100;
+		$num_iter = 0;
+		while (($num_iter < $limit) && ($Fchange)) {
+			for ($i = 0; $i < $splitcount; $i++) {
+				$clcoffset[$i] = 0;
+				$clccount[$i] = 0;
+			}
+			$num_iter++;
+			$FChange = false;
+			$CLC1 = 0;
+			$CLC2 = 1;
+			for ($i = $split[0]; $i < $split[$splitcount]; $i++) {
+				if ($i >= $clc[$CLC2]) {
+					if ($CLC2 < 6) {
+						$CLC2++;
+						$CLC1++;
+					}
+				}
+				if (abs($i - $clc[$CLC1]) <= abs($i - $clc[$CLC2])) {
+					$clcoffset[$CLC1] += ($countmap[$i] * ($i - $clc[$CLC1]));				
+					$clccount[$CLC1]+= $countmap[$i];
+					//echo "adding $i to $CLC1, offset now $clcoffset[$CLC1] \n";
+				}
+				else {
+					$clcoffset[$CLC2] += ($countmap[$i] * ($i - $clc[$CLC2]));				
+					$clccount[$CLC2]+= $countmap[$i];
+					//echo "adding $i to $CLC2, offset now $clcoffset[$CLC2] \n";
+				}
 
-  $split[$splitcount] = $lastsplit;
+			}
+
+			for($i = 0; $i < $splitcount; $i++) {
+				if (floor($clcoffset[$i] != 0)) $Fchange = true;
+				$clc[$i] += floor($clcoffset[$i] / $clccount[$i]);
+			}
+
+		}
+	
+	}
+	echo "\nCluster centers: \n";
+	for ($i = 0; $i < $splitcount; $i++) {
+		echo "$clc[$i]\n";	
+	}
+	echo "cluster centers end\n";
+
+
+	$split[$splitcount] = $lastsplit;
   $myFILE = fopen("splits/c/c"."$filename"."_0.txt", "w");
   //echo $myFILE."\n";
   $splitID = 1;
