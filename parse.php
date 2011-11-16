@@ -65,6 +65,9 @@ foreach($filelist as $id => $filename) {
   $bmp=imagecreate($sx,$sy);
   $black=imagecolorallocate($bmp,0,0,0);
   $white=imagecolorallocate($bmp,255,255,255);
+  $black_img=imagecolorallocate($img,0,0,255);
+  $blue_img=imagecolorallocate($img,0,0,255);
+  $green_img=imagecolorallocate($img,0,255,0);
   $red_img=imagecolorallocate($img,255,0,0);
   $white_img=imagecolorallocate($img,255,255,255);
   imagefilledrectangle($bmp, 0, 0, $sx, $sy, $black);
@@ -282,7 +285,6 @@ foreach($filelist as $id => $filename) {
       }
     }//pokusy 1
     if($pavel_pokusy==3){
-      $stackx[]=-1;
       $abs=3;
       unset ($stackx);
       unset ($stacky);
@@ -291,15 +293,22 @@ foreach($filelist as $id => $filename) {
            $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
            $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
            $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
+           $matrix[$x][$y]='r';
            if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
-             imagesetpixel($img,$x,$y,$white_img);
+             //imagesetpixel($img,$x,$y,$green_img);
+             $matrix[$x][$y]='w';
+					 }
+					 if($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
+					 
+             $matrix[$x][$y]='b';
+             imagesetpixel($img,$x,$y,$blue_img);
+             $stackx[]=$x;
+             $stacky[]=$y;
 					 }
         }
       }
+      $stackx[]=-1;
 
-
-      imagepng($img,"out.png");
-      die;
       
       while($cx=array_shift($stackx)){//barvy okoli
         if($cx==-1){
@@ -361,6 +370,17 @@ foreach($filelist as $id => $filename) {
           $stacky[]=$cy;
         }
       }
+      for($x=0;$x<$sx;++$x){  //x = row
+        for($y=0;$y<$sy;++$y){  //y = col
+           $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
+           $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
+           $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
+           if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
+             imagesetpixel($img,$x,$y,$green_img);
+					 }
+        }
+      }
+      
       echo "\n";
       for($y=0;$y<$sy;++$y){  //x = row
         for($x=0;$x<$sx;++$x){
@@ -369,6 +389,9 @@ foreach($filelist as $id => $filename) {
         echo"\n";
       }
 
+
+      imagepng($img,"out.png");
+      die;
 
     }//pokusy 3
 
