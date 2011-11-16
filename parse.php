@@ -1,3 +1,20 @@
+<?php
+require_once 'config.php';
+OpenDB();
+$query="SELECT * FROM users;";
+$result=mysql_query($query);
+while ($data=mysql_fetch_array($result)){
+  echo $data['name'].' '.$data['id'].$br;
+}
+echo '<hr />';
+
+$query="SELECT * FROM score;";
+$result=mysql_query($query);
+while ($data=mysql_fetch_array($result)){
+  echo $data['score'].' '.$data['id'].$br;
+}
+?>
+
 #!/usr/bin/php
 <?php
   //$ImgID = rand(1, 84);
@@ -122,244 +139,244 @@ foreach($filelist as $id => $filename) {
   }
   
   
-if($pavel_pokusy!=0){  //START pavel
+  if($pavel_pokusy!=0){  //START pavel
 
-  //pokus o pripojovani souvislych oblasti v cerne
-  for($y=0;$y<$sy;++$y){  //x = row
-    for($x=0;$x<$sx;++$x){
-      echo $matrix[$x][$y];
-    }
-    echo"\n";
-  }
-if($pavel_pokusy==4){
-  //odstraneni r s <=1 sousedem
-  while($cx=array_shift($stackr_x)){
-    $cy=array_shift($stackr_y);
-    $neigh=0;
-    for($ox=-1;$ox<2;$ox++){
-      for($oy=-1;$oy<2;$oy++){
-        if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
-          if($matrix[$cx+$ox][$cy+$oy]=='r')
-            $neigh++;
-        }
+    //pokus o pripojovani souvislych oblasti v cerne
+    for($y=0;$y<$sy;++$y){  //x = row
+      for($x=0;$x<$sx;++$x){
+        echo $matrix[$x][$y];
       }
+      echo"\n";
     }
-    if($neigh<2){
-      $stackrrx[]=$cx;
-      $stackrry[]=$cy;
-    }
-  }
-  unset($neigh);
-
-  while(isset($stackrrx) && $rx=array_shift($stackrrx)){
-    $ry=array_shift($stackrry);
-    $matrix[$rx][$ry]="B";
-    $stackx[]=$cx;
-    $stacky[]=$cy;
-  }  
-}
-  for($y=0;$y<$sy;++$y){  //x = row
-    for($x=0;$x<$sx;++$x){
-      echo $matrix[$x][$y];
-    }
-    echo"\n";
-  }
-  //odstraneno
-if($pavel_pokusy==2){
-  while($cx=array_shift($stackx)){
-    $cy=array_shift($stacky);
-    $bestr=10000;
-    $best=10000;
-    for($i=0;$i<1;$i++){
-      $curr=0;
-      $end1='';
-      $end2='';
-      $over=5;
-      for($j=0;($cx+$j*$dirx[$i]<$sx)&&($cx+$j*$dirx[$i]>=0)&&($cy+$j*$diry[$i]<$sy)&&($cy+$j*$diry[$i]>=0);$j++){
-        $curr+=$dirc[$i];
-        if($matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]]!='b'){
-          if($matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]]=='r' || $over--<0){
-            $end1=$matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]];
-            break;
+    if($pavel_pokusy==4){
+      //odstraneni r s <=1 sousedem
+      while($cx=array_shift($stackr_x)){
+        $cy=array_shift($stackr_y);
+        $neigh=0;
+        for($ox=-1;$ox<2;$ox++){
+          for($oy=-1;$oy<2;$oy++){
+            if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
+              if($matrix[$cx+$ox][$cy+$oy]=='r')
+                $neigh++;
+            }
           }
         }
-      }
-      $over=5;
-      for($j=0;($cx-$j*$dirx[$i]<$sx)&&($cx-$j*$dirx[$i]>=0)&&($cy-$j*$diry[$i]<$sy)&&($cy-$j*$diry[$i]>=0);$j++){
-        $curr+=$dirc[$i];
-        if($matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]]!='b'){
-          if($matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]]=='r' || $over--<0){
-            $end2=$matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]];
-            break;
-          }
+        if($neigh<2){
+          $stackrrx[]=$cx;
+          $stackrry[]=$cy;
         }
       }
-      if($end1=='r' && $end2=='r' && $curr<$bestr){
-        $bestr=$curr;
-      }
-      if($curr<$best){
-        $best=$curr;
-      }
-    }
-    if($bestr<3*$best){
-      //file_put_contents('php://stderr', "hmm\n");
-      $stackrx[]=$cx;
-      $stackry[]=$cy;
-    }else{
-      //file_put_contents('php://stderr', "$bestr $end1 $end2\n");
-      $stackwx[]=$cx;
-      $stackwy[]=$cy;
-    }
-  }
-  while(isset($stackrx) && $rx=array_shift($stackrx)){
-    $ry=array_shift($stackry);
-    $matrix[$rx][$ry]="r";
-    imagesetpixel($img,$rx,$ry,$red_img);
-  }
-  while($wx=array_shift($stackwx)){
-    $wy=array_shift($stackwy);
-    $matrix[$wx][$wy]="w";
-    imagesetpixel($img,$wx,$wy,$white_img);
-  }
-  echo "\n";
-  for($y=0;$y<$sy;++$y){  //x = row
-    for($x=0;$x<$sx;++$x){
-      echo $matrix[$x][$y];
-    }
-    echo"\n";
-  }
-  
-}
+      unset($neigh);
 
-if($pavel_pokusy==1){
-  $stackx[]=-1;
-  while($cx=array_shift($stackx)){//pokus o pripojovani souvislych oblasti
-    if($cx==-1){
-      $change=0;
-      while($rx=array_shift($stackrx)){
+      while(isset($stackrrx) && $rx=array_shift($stackrrx)){
+        $ry=array_shift($stackrry);
+        $matrix[$rx][$ry]="B";
+        $stackx[]=$cx;
+        $stacky[]=$cy;
+      }  
+    }
+      for($y=0;$y<$sy;++$y){  //x = row
+        for($x=0;$x<$sx;++$x){
+          echo $matrix[$x][$y];
+        }
+        echo"\n";
+      }
+      //odstraneno
+    if($pavel_pokusy==2){
+      while($cx=array_shift($stackx)){
+        $cy=array_shift($stacky);
+        $bestr=10000;
+        $best=10000;
+        for($i=0;$i<1;$i++){
+          $curr=0;
+          $end1='';
+          $end2='';
+          $over=5;
+          for($j=0;($cx+$j*$dirx[$i]<$sx)&&($cx+$j*$dirx[$i]>=0)&&($cy+$j*$diry[$i]<$sy)&&($cy+$j*$diry[$i]>=0);$j++){
+            $curr+=$dirc[$i];
+            if($matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]]!='b'){
+              if($matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]]=='r' || $over--<0){
+                $end1=$matrix[$cx+$j*$dirx[$i]][$cy+$j*$diry[$i]];
+                break;
+              }
+            }
+          }
+          $over=5;
+          for($j=0;($cx-$j*$dirx[$i]<$sx)&&($cx-$j*$dirx[$i]>=0)&&($cy-$j*$diry[$i]<$sy)&&($cy-$j*$diry[$i]>=0);$j++){
+            $curr+=$dirc[$i];
+            if($matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]]!='b'){
+              if($matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]]=='r' || $over--<0){
+                $end2=$matrix[$cx-$j*$dirx[$i]][$cy-$j*$diry[$i]];
+                break;
+              }
+            }
+          }
+          if($end1=='r' && $end2=='r' && $curr<$bestr){
+            $bestr=$curr;
+          }
+          if($curr<$best){
+            $best=$curr;
+          }
+        }
+        if($bestr<3*$best){
+          //file_put_contents('php://stderr', "hmm\n");
+          $stackrx[]=$cx;
+          $stackry[]=$cy;
+        }else{
+          //file_put_contents('php://stderr', "$bestr $end1 $end2\n");
+          $stackwx[]=$cx;
+          $stackwy[]=$cy;
+        }
+      }
+      while(isset($stackrx) && $rx=array_shift($stackrx)){
         $ry=array_shift($stackry);
         $matrix[$rx][$ry]="r";
-        $change=1;
+        imagesetpixel($img,$rx,$ry,$red_img);
       }
       while($wx=array_shift($stackwx)){
         $wy=array_shift($stackwy);
         $matrix[$wx][$wy]="w";
-        $change=1;
+        imagesetpixel($img,$wx,$wy,$white_img);
       }
-      if($change){
-        $stackx[]=-1;
-        continue;
-      }else{
-        break;
+      echo "\n";
+      for($y=0;$y<$sy;++$y){  //x = row
+        for($x=0;$x<$sx;++$x){
+          echo $matrix[$x][$y];
+        }
+        echo"\n";
       }
+
     }
-    $cy=array_shift($stacky);
-    $neigh['w']=0;
-    $neigh['r']=0;
-    $neigh['b']=0;
-    $sum=0;
-    for($ox=-2;$ox<3;$ox++){
-      for($oy=-2;$oy<3;$oy++){
-        if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
-          $neigh[$matrix[$cx+$ox][$cy+$oy]]+=5-abs($ox)-abs($oy);
-          $sum+=5-abs($ox)-abs($oy);
-                         if($matrix[$cx+$ox][$cy+$oy]){
-        //TODO vzit v podtaz primo barvy okoli
+
+    if($pavel_pokusy==1){
+      $stackx[]=-1;
+      while($cx=array_shift($stackx)){//pokus o pripojovani souvislych oblasti
+        if($cx==-1){
+          $change=0;
+          while($rx=array_shift($stackrx)){
+            $ry=array_shift($stackry);
+            $matrix[$rx][$ry]="r";
+            $change=1;
+          }
+          while($wx=array_shift($stackwx)){
+            $wy=array_shift($stackwy);
+            $matrix[$wx][$wy]="w";
+            $change=1;
+          }
+          if($change){
+            $stackx[]=-1;
+            continue;
+          }else{
+            break;
           }
         }
-      }
-    }
-    if($neigh["r"]>=0.28*$sum){
-      $stackrx[]=$cx;
-      $stackry[]=$cy;
-      echo "$cx $cy\n";
-    }elseif($neigh["w"]>=0.5*$sum){
-      echo "w$cx $cy\n";
-      $stackwx[]=$cx;
-      $stackwy[]=$cy;
-    }else{
-      echo "_$cx $cy\n";
-      $stackx[]=$cx;
-      $stacky[]=$cy;
-    }
-  }
-}//pokusy 1
-if($pavel_pokusy==3){
-  $stackx[]=-1;
-  $abs=3;
-  while($cx=array_shift($stackx)){//barvy okoli
-    if($cx==-1){
-      $change=0;
-      while($rx=array_shift($stackrx)){
-        $ry=array_shift($stackry);
-        $r=array_shift($stackr);
-        $g=array_shift($stackg);
-        $b=array_shift($stackb);
-        if($r<80 && $g<80 && $b<80){}//todo
-        $matr[$rx][$ry]=$r;
-        $matg[$rx][$ry]=$g;
-        $matb[$rx][$ry]=$b;
-        $matrix[$rx][$ry]="r";
-        $col=imagecolorallocate($img,$r,$g,$b);
-        imagesetpixel($img,$rx,$ry,$col);
-        $change=1;
-      }
-      if($change){
-        $stackx[]=-1;
-        continue;
-      }else{
-        break;
-      }
-    }
-    $cy=array_shift($stacky);
-    $neigh['w']=0;
-    $neigh['r']=0;
-    $neigh['b']=0;
-    $sum=0;
-    $sumc=0;
-    $r=0;$g=0;$b=0;
-    
-    for($ox=-$abs;$ox<$abs+1;$ox++){
-      for($oy=-$abs;$oy<$abs+1;$oy++){
-        if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
-          $me=5-abs($ox)-abs($oy);
-          $neigh[$matrix[$cx+$ox][$cy+$oy]]+=$me;
-          $sum+=$me;
-          if($matrix[$cx+$ox][$cy+$oy]!='b'){
-            $sumc+=5-abs($ox)-abs($oy);
-            $r+=$me*$matr[$cx+$ox][$cy+$oy];
-            $g+=$me*$matg[$cx+$ox][$cy+$oy];
-            $b+=$me*$matb[$cx+$ox][$cy+$oy];
+        $cy=array_shift($stacky);
+        $neigh['w']=0;
+        $neigh['r']=0;
+        $neigh['b']=0;
+        $sum=0;
+        for($ox=-2;$ox<3;$ox++){
+          for($oy=-2;$oy<3;$oy++){
+            if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
+              $neigh[$matrix[$cx+$ox][$cy+$oy]]+=5-abs($ox)-abs($oy);
+              $sum+=5-abs($ox)-abs($oy);
+                             if($matrix[$cx+$ox][$cy+$oy]){
+            //TODO vzit v podtaz primo barvy okoli
+              }
+            }
           }
         }
+        if($neigh["r"]>=0.28*$sum){
+          $stackrx[]=$cx;
+          $stackry[]=$cy;
+          echo "$cx $cy\n";
+        }elseif($neigh["w"]>=0.5*$sum){
+          echo "w$cx $cy\n";
+          $stackwx[]=$cx;
+          $stackwy[]=$cy;
+        }else{
+          echo "_$cx $cy\n";
+          $stackx[]=$cx;
+          $stacky[]=$cy;
+        }
       }
-    }
-    if(5*$sumc>=2*$sum){
-      $stackrx[]=$cx;
-      $stackry[]=$cy;
-      $stackr[]=$r/$sumc;
-      $stackg[]=$g/$sumc;
-      $stackb[]=$b/$sumc;
-      echo "$cx $cy \n";
-    }else{
-      echo "_$cx $cy\n";
-      $stackx[]=$cx;
-      $stacky[]=$cy;
-    }
-  }
-  echo "\n";
-  for($y=0;$y<$sy;++$y){  //x = row
-    for($x=0;$x<$sx;++$x){
-      echo $matrix[$x][$y];
-    }
-    echo"\n";
-  }
+    }//pokusy 1
+    if($pavel_pokusy==3){
+      $stackx[]=-1;
+      $abs=3;
+      while($cx=array_shift($stackx)){//barvy okoli
+        if($cx==-1){
+          $change=0;
+          while($rx=array_shift($stackrx)){
+            $ry=array_shift($stackry);
+            $r=array_shift($stackr);
+            $g=array_shift($stackg);
+            $b=array_shift($stackb);
+            if($r<80 && $g<80 && $b<80){}//todo
+            $matr[$rx][$ry]=$r;
+            $matg[$rx][$ry]=$g;
+            $matb[$rx][$ry]=$b;
+            $matrix[$rx][$ry]="r";
+            $col=imagecolorallocate($img,$r,$g,$b);
+            imagesetpixel($img,$rx,$ry,$col);
+            $change=1;
+          }
+          if($change){
+            $stackx[]=-1;
+            continue;
+          }else{
+            break;
+          }
+        }
+        $cy=array_shift($stacky);
+        $neigh['w']=0;
+        $neigh['r']=0;
+        $neigh['b']=0;
+        $sum=0;
+        $sumc=0;
+        $r=0;$g=0;$b=0;
+
+        for($ox=-$abs;$ox<$abs+1;$ox++){
+          for($oy=-$abs;$oy<$abs+1;$oy++){
+            if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
+              $me=5-abs($ox)-abs($oy);
+              $neigh[$matrix[$cx+$ox][$cy+$oy]]+=$me;
+              $sum+=$me;
+              if($matrix[$cx+$ox][$cy+$oy]!='b'){
+                $sumc+=5-abs($ox)-abs($oy);
+                $r+=$me*$matr[$cx+$ox][$cy+$oy];
+                $g+=$me*$matg[$cx+$ox][$cy+$oy];
+                $b+=$me*$matb[$cx+$ox][$cy+$oy];
+              }
+            }
+          }
+        }
+        if(5*$sumc>=2*$sum){
+          $stackrx[]=$cx;
+          $stackry[]=$cy;
+          $stackr[]=$r/$sumc;
+          $stackg[]=$g/$sumc;
+          $stackb[]=$b/$sumc;
+          echo "$cx $cy \n";
+        }else{
+          echo "_$cx $cy\n";
+          $stackx[]=$cx;
+          $stacky[]=$cy;
+        }
+      }
+      echo "\n";
+      for($y=0;$y<$sy;++$y){  //x = row
+        for($x=0;$x<$sx;++$x){
+          echo $matrix[$x][$y];
+        }
+        echo"\n";
+      }
 
 
-}//pokusy 3
+    }//pokusy 3
 
 
-}//END pavel
+  }//END pavel
 
 
   //zapsani pokusu do pouzivanych dat
