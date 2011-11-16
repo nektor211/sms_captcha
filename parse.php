@@ -1,20 +1,3 @@
-<?php
-require_once 'config.php';
-OpenDB();
-$query="SELECT * FROM users;";
-$result=mysql_query($query);
-while ($data=mysql_fetch_array($result)){
-  echo $data['name'].' '.$data['id'].$br;
-}
-echo '<hr />';
-
-$query="SELECT * FROM score;";
-$result=mysql_query($query);
-while ($data=mysql_fetch_array($result)){
-  echo $data['score'].' '.$data['id'].$br;
-}
-?>
-
 #!/usr/bin/php
 <?php
   //$ImgID = rand(1, 84);
