@@ -52,7 +52,7 @@ $dirx[]=-1;
 $diry[]=2;
 $dirc[]=1.5;*/
 
-$pavel_pokusy=2;//1 slevani, 2 spojovani dle vzdalenosti,3....
+$pavel_pokusy=3;//1 slevani, 2 spojovani dle vzdalenosti,3....
 
 
   
@@ -263,9 +263,6 @@ foreach($filelist as $id => $filename) {
             if(($cx+$ox<$sx)&&($cx+$ox>=0)&&($cy+$oy<$sy)&&($cy+$oy>=0)){
               $neigh[$matrix[$cx+$ox][$cy+$oy]]+=5-abs($ox)-abs($oy);
               $sum+=5-abs($ox)-abs($oy);
-                             if($matrix[$cx+$ox][$cy+$oy]){
-            //TODO vzit v podtaz primo barvy okoli
-              }
             }
           }
         }
@@ -287,6 +284,23 @@ foreach($filelist as $id => $filename) {
     if($pavel_pokusy==3){
       $stackx[]=-1;
       $abs=3;
+      unset ($stackx);
+      unset ($stacky);
+      for($x=0;$x<$sx;++$x){  //x = row
+        for($y=0;$y<$sy;++$y){  //y = col
+           $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
+           $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
+           $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
+           if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
+             imagesetpixel($img,$x,$y,$white_img);
+					 }
+        }
+      }
+
+
+      imagepng($img,"out.png");
+      die;
+      
       while($cx=array_shift($stackx)){//barvy okoli
         if($cx==-1){
           $change=0;
