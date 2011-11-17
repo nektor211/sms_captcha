@@ -37,7 +37,7 @@ while (false != ($entry = $d->read())) {
     
     $i=$entrya[1];
     $id=(int)substr($entrya[0],1);
-    if(($do!=0||$od!=0) &&( $id>$do || $id<$do))continue;
+    if(($do!=0||$od!=0) &&( $id>$do || $id<$od))continue;
     
     if($lasti>$i) echo "<br>";
     if($i==0) echo $entrya[0];

@@ -52,7 +52,7 @@ $dirx[]=-1;
 $diry[]=2;
 $dirc[]=1.5;*/
 
-$pavel_pokusy=0;//1 slevani, 2 spojovani dle vzdalenosti,3....
+$pavel_pokusy=3;//1 slevani, 2 spojovani dle vzdalenosti,3....
 
 
   
@@ -67,7 +67,7 @@ foreach($filelist as $id => $filename) {
   $white=imagecolorallocate($bmp,255,255,255);
   $black_img=imagecolorallocate($img,0,0,255);
   $blue_img=imagecolorallocate($img,0,0,255);
-  $green_img=imagecolorallocate($img,0,255,0);
+  $green_img=imagecolorallocate($img,0,100,0);
   $red_img=imagecolorallocate($img,255,0,0);
   $white_img=imagecolorallocate($img,255,255,255);
   imagefilledrectangle($bmp, 0, 0, $sx, $sy, $black);
@@ -300,18 +300,55 @@ foreach($filelist as $id => $filename) {
            if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
              //imagesetpixel($img,$x,$y,$green_img);
              $matrix[$x][$y]='w';
-					 }
-					 if($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
+					 }elseif($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
 					 
              $matrix[$x][$y]='b';
              imagesetpixel($img,$x,$y,$blue_img);
              $stackx[]=$x;
              $stacky[]=$y;
+					 }else{
+					   $matrix[$x][$y]='r';
 					 }
         }
       }
       $stackx[]=-1;
-
+      
+      while(($cx=array_shift($stackx))!=-1){//divani se nahoru
+			  $cy=array_shift($stacky);
+			  $over=5;
+			  $end1='';
+			  $end2='';
+				
+				for($oy=0;$oy+$cy<$sy&&$over>0;$oy++){
+			    if($matrix[$cx][$cy+$oy]=='w')
+			      $over--;
+			    elseif($matrix[$cx][$cy+$oy]=='r'){
+					  $end1='r';
+					  break;
+					}
+				}
+				for($oy=0;$oy+$cy>=0&&$over>0;$oy--){
+			    if($matrix[$cx][$cy+$oy]=='w')
+			      $over--;
+			    elseif($matrix[$cx][$cy+$oy]=='r'){
+					  $end2='r';
+					  break;
+					}
+				}
+				if($end1==$end2&&$end1=='r'){
+				  $matrix[$cx][$cy]='r';
+				  $matr[$cx][$cy]=212;
+				  $matg[$cx][$cy]=7;
+				  $matb[$cx][$cy]=113;
+				  echo "s $cx $cy\n";
+             //imagesetpixel($img,$x,$y,$white_img);
+				}else{
+             $stackx[]=$cx;
+             $stacky[]=$cy;
+				
+				}
+			}
+      $stackx[]=-1;
       
       while($cx=array_shift($stackx)){//barvy okoli
         if($cx==-1){
