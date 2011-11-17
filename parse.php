@@ -296,14 +296,13 @@ foreach($filelist as $id => $filename) {
            $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
            $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
            $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
-           $matrix[$x][$y]='r';
            if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
              //imagesetpixel($img,$x,$y,$green_img);
              $matrix[$x][$y]='w';
 					 }elseif($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
 					 
              $matrix[$x][$y]='b';
-             imagesetpixel($img,$x,$y,$blue_img);
+             //imagesetpixel($img,$x,$y,$blue_img);
              $stackx[]=$x;
              $stacky[]=$y;
 					 }else{
@@ -327,6 +326,7 @@ foreach($filelist as $id => $filename) {
 					  break;
 					}
 				}
+			  $over=5;
 				for($oy=0;$oy+$cy>=0&&$over>0;$oy--){
 			    if($matrix[$cx][$cy+$oy]=='w')
 			      $over--;
@@ -341,13 +341,13 @@ foreach($filelist as $id => $filename) {
 				  $matg[$cx][$cy]=7;
 				  $matb[$cx][$cy]=113;
 				  echo "s $cx $cy\n";
-             //imagesetpixel($img,$x,$y,$white_img);
+          imagesetpixel($img,$cx,$cy,$white_img);
 				}else{
-             $stackx[]=$cx;
-             $stacky[]=$cy;
-				
+          $stackx[]=$cx;
+          $stacky[]=$cy;
 				}
 			}
+			
       $stackx[]=-1;
       
       while($cx=array_shift($stackx)){//barvy okoli
@@ -410,6 +410,9 @@ foreach($filelist as $id => $filename) {
           $stacky[]=$cy;
         }
       }
+  imagepng($img,"tmp/$id.png");
+  continue;
+      
       for($x=0;$x<$sx;++$x){  //x = row
         for($y=0;$y<$sy;++$y){  //y = col
            $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
