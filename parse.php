@@ -316,12 +316,15 @@ foreach($filelist as $id => $filename) {
 			  $over=1;
 			  $end1='';
 			  $end2='';
-				
+			  
 				for($oy=0;$oy+$cy<$sy&&$over>0;$oy++){
 			    if($matrix[$cx][$cy+$oy]=='w')
 			      $over--;
 			    elseif($matrix[$cx][$cy+$oy]=='r'){
 					  $end1='r';
+					  $r=$matr[$cx][$cy+$oy];
+					  $g=$matg[$cx][$cy+$oy];
+					  $b=$matb[$cx][$cy+$oy];
 					  break;
 					}
 				}
@@ -331,22 +334,28 @@ foreach($filelist as $id => $filename) {
 			      $over--;
 			    elseif($matrix[$cx][$cy+$oy]=='r'){
 					  $end2='r';
+					  $r+=$matr[$cx][$cy+$oy];
+					  $g+=$matg[$cx][$cy+$oy];
+					  $b+=$matb[$cx][$cy+$oy];
 					  break;
 					}
 				}
 				if($end1==$end2&&$end1=='r'){
 				  $matrix[$cx][$cy]='r';
-				  $matr[$cx][$cy]=212;
-				  $matg[$cx][$cy]=7;
-				  $matb[$cx][$cy]=113;
+				  $matr[$cx][$cy]=$r/2;
+				  $matg[$cx][$cy]=$g/2;
+				  $matb[$cx][$cy]=$b/2;
 				  echo "s1 $cx $cy\n";
-          imagesetpixel($img,$cx,$cy,$white_img);
+            $col=imagecolorallocate($img,$r/2,$g/2,$b/2);
+          imagesetpixel($img,$cx,$cy,$col);
 				}else{
 				  echo "n1 $cx $cy\n";
           $stackx[]=$cx;
           $stacky[]=$cy;
 				}
 			}
+  //imagepng($img,"tmp/$id.png");
+  //continue;
 			
       $stackx[]=-1;
       
@@ -428,7 +437,7 @@ foreach($filelist as $id => $filename) {
                imagesetpixel($img,$x,$y,$blue_img);
              }else{
                $matrix[$x][$y]="r";
-               imagesetpixel($img,$x,$y,$red_img);
+               //imagesetpixel($img,$x,$y,$red_img);
 						 }
 					 }
         }
