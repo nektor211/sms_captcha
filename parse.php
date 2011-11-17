@@ -296,17 +296,16 @@ foreach($filelist as $id => $filename) {
            $rg=($matr[$x][$y]-$matg[$x][$y])*($matr[$x][$y]-$matg[$x][$y]);
            $rb=($matr[$x][$y]-$matb[$x][$y])*($matr[$x][$y]-$matb[$x][$y]);
            $bg=($matb[$x][$y]-$matg[$x][$y])*($matb[$x][$y]-$matg[$x][$y]);
+					   $matrix[$x][$y]='r';
            if($rg+$rb+$bg<500 || ( $matr[$x][$y]<$matb[$x][$y] && $matr[$x][$y]<$matg[$x][$y])){
-             //imagesetpixel($img,$x,$y,$green_img);
+             imagesetpixel($img,$x,$y,$green_img);
              $matrix[$x][$y]='w';
-					 }elseif($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
-					 
+					 }
+					 if($matr[$x][$y]<60 && $matb[$x][$y]<60 && $matg[$x][$y]<60){
              $matrix[$x][$y]='b';
-             //imagesetpixel($img,$x,$y,$blue_img);
+             imagesetpixel($img,$x,$y,$blue_img);
              $stackx[]=$x;
              $stacky[]=$y;
-					 }else{
-					   $matrix[$x][$y]='r';
 					 }
         }
       }
@@ -314,7 +313,7 @@ foreach($filelist as $id => $filename) {
       
       while(($cx=array_shift($stackx))!=-1){//divani se nahoru
 			  $cy=array_shift($stacky);
-			  $over=5;
+			  $over=1;
 			  $end1='';
 			  $end2='';
 				
@@ -326,7 +325,7 @@ foreach($filelist as $id => $filename) {
 					  break;
 					}
 				}
-			  $over=5;
+			  $over+=1;
 				for($oy=0;$oy+$cy>=0&&$over>0;$oy--){
 			    if($matrix[$cx][$cy+$oy]=='w')
 			      $over--;
@@ -340,9 +339,10 @@ foreach($filelist as $id => $filename) {
 				  $matr[$cx][$cy]=212;
 				  $matg[$cx][$cy]=7;
 				  $matb[$cx][$cy]=113;
-				  echo "s $cx $cy\n";
+				  echo "s1 $cx $cy\n";
           imagesetpixel($img,$cx,$cy,$white_img);
 				}else{
+				  echo "n1 $cx $cy\n";
           $stackx[]=$cx;
           $stacky[]=$cy;
 				}
@@ -375,6 +375,7 @@ foreach($filelist as $id => $filename) {
           }
         }
         $cy=array_shift($stacky);
+        echo ";$cx $cy \n";
         $neigh['w']=0;
         $neigh['r']=0;
         $neigh['b']=0;
@@ -410,8 +411,8 @@ foreach($filelist as $id => $filename) {
           $stacky[]=$cy;
         }
       }
-  imagepng($img,"tmp/$id.png");
-  continue;
+  //imagepng($img,"tmp/$id.png");
+  //continue;
       
       for($x=0;$x<$sx;++$x){  //x = row
         for($y=0;$y<$sy;++$y){  //y = col
@@ -422,10 +423,13 @@ foreach($filelist as $id => $filename) {
              imagesetpixel($img,$x,$y,$green_img);//white
              $matrix[$x][$y]="w";
 					 }else{
-             $matrix[$x][$y]="r";
-					   if($rg+$rb+$bg<3000 ){
+					   if($rg+$rb+$bg<3500 ){
+               $matrix[$x][$y]="R";
                imagesetpixel($img,$x,$y,$blue_img);
-             }
+             }else{
+               $matrix[$x][$y]="r";
+               imagesetpixel($img,$x,$y,$red_img);
+						 }
 					 }
         }
       }
@@ -443,7 +447,6 @@ foreach($filelist as $id => $filename) {
 
 
   }//END pavel
-
 
   //zapsani pokusu do pouzivanych dat
   for($x=0;$x<$sx;++$x){  //x = row
@@ -475,6 +478,9 @@ foreach($filelist as $id => $filename) {
   
   
   imagepng($img,"tmp/$id.png");
+  //continue;
+  
+  
   $splitcount = 0;
   $ROWS = count($countmap);
   for ($id = 0; $id < $ROWS; $id++) {
