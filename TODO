@@ -10,8 +10,14 @@ kdyz bude dost dat.
 
 
 Pavel:
-napsat od-do u splits a tag
+udelat pokryvani uzavrenych der v 4, 6, 8, 9
+tip: BFS, ale oznacuj policka, ktery uz jsi v nejakym bfs projel, tj. kdyz z nejakyho dojedes na kraj obrazku, tak oznac vsechny navstiveny v tom BFS jako ne-vnitrek cisla, pak z nich a) nemusis poustet BFS a b) kdyz v jinym BFS najdes takovy policko, muzes zastavit a vsechny navstiveny policka oznacit jako ne-vnitrek.
+
+
 
 Kuba:
 dopsat ./rum.sh -r, a odpovidajici bin/ex4run.m 
-dodelat zobrazeni clusteringu a pripadne dodelat 2D clustering
+dodelat zobrazeni clusteringu a pripadne dodelat 2D clustering, clustering do elips, clustering s gaussianem na sklony krivek
+
+
+
