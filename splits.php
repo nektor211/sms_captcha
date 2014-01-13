@@ -48,9 +48,9 @@ while (false != ($entry = $d->read())) {
 				$all[$txt][$i]=chop($lines[0]);
 			}
 			else {
-				$all[$txt][$i].= "";
+				$all[$txt][$i].= "XX";
 			}
-	  }elseif((!isset($all[$txt])) && file_exists("samples/$txt")){
+	  }/*elseif((!isset($all[$txt])) && file_exists("samples/$txt")){
 	  	
 			$lines=file("samples/$txt");
 			if (isset ($lines[0])) {
@@ -60,12 +60,12 @@ while (false != ($entry = $d->read())) {
 			else {
 				$all[$txt][].= "";
 			}
-		}
+		}*/
 		else{
-	  	$all[$txt][].="";
+	  	$all[$txt][].="???";
 		}
 	//echo $data."\n";
-	echo "<image src=\"splits/png/$entry\" />".$all[$txt][$i]."|\n";
+	echo "<image src=\"splits/png/$entry\" />".$all[$txt][$i]."|";
 	echo "<input type=\"text\" name=\"$pod\" value=\"".$all[$txt][$i]."\" size=1 />";
   }
 }
