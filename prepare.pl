@@ -13,7 +13,8 @@ for (@s){
 	my $c = <$f> // "!";
 	$d{$c}++;
 	close $f;
-	if($c =~ /[1-9]/){
+	s/txt/png/g;
+	if($c =~ /[1-9]/ && -e){
 		print $out "$c\t$_";
 	}
 }
