@@ -9,7 +9,7 @@ for i = 2:size(data{1})
   img = [img reshape(rgb2gray(imread(data{2}{i})),1500,1)];
 end
 
-maxk = 1;
+maxk = 10;
 p = zeros(5,7,maxk);
 pt = zeros(5,7,maxk);
 t = zeros(5,7,maxk);
@@ -189,10 +189,10 @@ emin = min(e,[],3)
 emean = mean(e,3)
 tmin = min(t,[],3)
 tmean = mean(t,3)
-save('p2','p');
-save('e2','e');
-save('t2','t');
-save('q2','q');
-save('pt2','pt');
+save('p10','p');
+save('e10','e');
+save('t10','t');
+save('q10','q');
+save('pt10','pt');
 
 %nprtool
