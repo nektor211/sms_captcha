@@ -9,8 +9,10 @@ for i = 2:size(data{1})
   img = [img reshape(rgb2gray(imread(data{2}{i})),1500,1)];
 end
 
-maxk = 100;
+maxk = 1000;
 p = zeros(5,7,maxk);
+t = zeros(5,7,maxk);
+e = zeros(5,7,maxk);
 
 c = size(data{1},1)
 %c = 30
@@ -36,12 +38,16 @@ for n = 1:5
 	else
 		net30scg = net;
 	end
+	net30scg.init;
 	net30scg.trainParam.max_fail = 10;
 	net30scg.trainParam.showWindow = false;
 	[net30scg,tr] = train(net30scg,imgd,val);
 	performance30scg = perform(net30scg,val,net30scg(imgd));
 	p(n,1,k) = performance30scg;
+	t(n,1,k) = tr.time(tr.num_epochs+1);
+	e(n,1,k) = tr.num_epochs;
 	
+	net30scg.init;
 	net30gdm = net30scg;
 	net30gdm.trainFcn = 'traingd';
 	net30gdm.trainParam.max_fail = 10;
@@ -49,6 +55,8 @@ for n = 1:5
 	[net30gdm,tr] = train(net30gdm,imgd,val);
 	performance30gdm = perform(net30gdm,val,net30gdm(imgd));
 	p(n,2,k) = performance30gdm;
+	t(n,2,k) = tr.time(tr.num_epochs+1);
+	e(n,2,k) = tr.num_epochs;
 	%plotconfusion(val,net30gdm(imgd))
 	%pause
 	if p(n,2,k) <0.0000
@@ -64,6 +72,8 @@ for n = 1:5
 	[net30gdm,tr] = train(net30gdm,imgd,val);
 	performance30gdm = perform(net30gdm,val,net30gdm(imgd));
 	p(n,3,k) = performance30gdm;
+	t(n,3,k) = tr.time(tr.num_epochs+1);
+	e(n,3,k) = tr.num_epochs;
 	%plotconfusion(val,net30gdm(imgd))
 	%pause
 	if p(n,3,k) <0.0000
@@ -80,6 +90,8 @@ for n = 1:5
 	[net30gdm,tr] = train(net30gdm,imgd,val);
 	performance30gdm = perform(net30gdm,val,net30gdm(imgd));
 	p(n,4,k) = performance30gdm;
+	t(n,4,k) = tr.time(tr.num_epochs+1);
+	e(n,4,k) = tr.num_epochs;
 	%plotconfusion(val,net30gdm(imgd))
 	%pause
 	if p(n,4,k) <0.0000
@@ -95,6 +107,8 @@ for n = 1:5
 	[net30gdx,tr] = train(net30gdx,imgd,val);
 	performance30gdx = perform(net30gdx,val,net30gdx(imgd));
 	p(n,5,k) =  performance30gdx;
+	t(n,5,k) = tr.time(tr.num_epochs+1);
+	e(n,5,k) = tr.num_epochs;
 	%plotconfusion(val,net30gdx(imgd))
 	%pause
 	if p(n,5,k) <0.0000
@@ -111,6 +125,8 @@ for n = 1:5
 	[net30gdx,tr] = train(net30gdx,imgd,val);
 	performance30gdx = perform(net30gdx,val,net30gdx(imgd));
 	p(n,6,k) =  performance30gdx;
+	t(n,6,k) = tr.time(tr.num_epochs+1);
+	e(n,6,k) = tr.num_epochs;
 	%plotconfusion(val,net30gdx(imgd))
 	%pause
 	if p(n,6,k) <0.0000
@@ -127,6 +143,8 @@ for n = 1:5
 	[net30gdx,tr] = train(net30gdx,imgd,val);
 	performance30gdx = perform(net30gdx,val,net30gdx(imgd));
 	p(n,7,k) =  performance30gdx;
+	t(n,7,k) = tr.time(tr.num_epochs+1);
+	e(n,7,k) = tr.num_epochs;
 	if p(n,7,k) <0.0000
 		plotconfusion(val,net30gdx(imgd))
 		p(n,7,k)
@@ -136,6 +154,12 @@ end
 end
 pmin = min(p,[],3)
 pmean = mean(p,3)
+emin = min(e,[],3)
+emean = mean(e,3)
+tmin = min(t,[],3)
+tmean = mean(t,3)
 save('p','p');
+save('e','e');
+save('t','t');
 
 %nprtool
